@@ -20,6 +20,6 @@ function(dune_install_python_package)
   endif()
 
   # install the package
-  execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env.sh pip install .
+  execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env.sh pip install -e .
                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
 endfunction()
