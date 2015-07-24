@@ -18,13 +18,6 @@ include(DuneMacros)
 # start a dune project with information from dune.module
 dune_project()
 
-# Build a virtual env in the build directory of dune-python
-# Downstream modules may install their packages into that
-# env and use it through the provided cmake modules and through
-# exported scripts.
-message("Building a virtual env in ${CMAKE_BINARY_DIR}/python-env...")
-execute_process(COMMAND virtualenv -p ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python-env)
-
 add_subdirectory("doc")
 add_subdirectory("cmake/modules")
 
