@@ -4,7 +4,8 @@
 
 dune-python provides infrastructure for dune modules that do
 ship python packages. That infrastructure is integrated into
-the dune build system.
+the dune build system. For more information, check the documents
+in the doc subfolder.
 
 ***************************************************************
 *                      Acknowledgments                        *

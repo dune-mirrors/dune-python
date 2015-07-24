@@ -1,0 +1,41 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{listings}
+\lstset{language=C++, basicstyle=\small\ttfamily,
+  stringstyle=\ttfamily, commentstyle=\it, extendedchars=true}
+
+\title{Technical Documentation of \textbf{dune-python}}
+
+\author{
+Dominic Kempf$^\dagger$
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\pagebreak
+
+\section{Introduction}
+dune-python is a Dune module that aims at providing the infrastructure needed whenever a Dune module does also contains some python code.
+
+\section{Structure of a dune module containing python code}
+The structure of a Dune module follows some conventions on where to place code. This sections aims at extending those good practices to python code. \\
+
+\begin{itemize}
+ \item All python code should be placed in a top-level directory called \lstinline!python!.
+ \item The contents of the directory \lstinline!python! should be a \lstinline!pip!-installable package\footnote{For an introduction into \lstinline!pip!, see }.
+\end{itemize}
+
+\section{The Dune virtualenv}
+
+\section{The python related CMake macros}
+
+\section{Summary - A checklist for people that developped a dune module that contains python code}
+
+
+\end{document}
