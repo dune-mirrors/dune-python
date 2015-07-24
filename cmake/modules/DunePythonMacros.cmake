@@ -1,7 +1,7 @@
 # include all macros that dune-python offers. They can be documented better if placed
 # in cmake modules grouped together by functionality
 include(CheckPythonPackage)
-include(InstallPythonPackage)
+include(DuneInstallPythonPackage)
 include(PythonVersion)
 
 # The code we do want to execute whenever a module that requires or suggests dune-python is configured
