@@ -1,3 +1,6 @@
-set(modules "DunePythonMacros.cmake")
-
-install(FILES ${modules} DESTINATION ${DUNE_INSTALL_MODULEDIR})
+install(FILES CheckPythonPackage.cmake
+              DunePythonMacros.cmake
+              InstallPythonPackage.cmake
+              env-wrapper.sh.in
+              PythonVersion.cmake
+        DESTINATION ${DUNE_INSTALL_MODULEDIR})
