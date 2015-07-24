@@ -19,7 +19,16 @@ function(dune_install_python_package)
     message(WARNING "Unparsed arguments in dune_install_python_packge: This often indicates typos!")
   endif()
 
-  # install the package
+  # install the package into the virtual env
   execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env.sh pip install -e .
                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
+
+  # define a rule on how to install the package during make install
+  if(DUNE_PYTHON_PIP_FOUND)
+    install(CODE "execute_process(COMMAND pip install .
+                                  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
+                 ")
+  else()
+    install(CODE "message(FATAL_ERROR \"You need pip installed on the host system to install a module that contains python code\")")
+  endif()
 endfunction()
