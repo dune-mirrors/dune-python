@@ -25,6 +25,10 @@ dune_project()
 message("Building a virtual env in ${CMAKE_BINARY_DIR}/python-env...")
 execute_process(COMMAND virtualenv -p ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/python-env)
 
+# TODO make this portable to non-unix systems by catching the other cases with if
+# and using other templates.
+configure_file(${CMAKE_SOURCE_DIR}/cmake/templates/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/dune-env.sh)
+
 add_subdirectory("doc")
 add_subdirectory("cmake/modules")
 
