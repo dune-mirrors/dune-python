@@ -25,7 +25,7 @@ endforeach()
 
 # If none was found, we need to create a new one.
 if(NOT DUNE_VIRTUALENV_PATH)
-  if(DUNE_PYTHON_VIRTUALENV_FOUND)
+  if(DUNE_PYTHON_virtualenv_FOUND)
     message("Building a virtual env in ${CMAKE_BINARY_DIR}/python-env...")
     execute_process(COMMAND virtualenv -p ${PYTHON_EXECUTABLE} --system-site-packages ${CMAKE_BINARY_DIR}/python-env)
     set(DUNE_VIRTUALENV_PATH ${CMAKE_BINARY_DIR}/python-env)
