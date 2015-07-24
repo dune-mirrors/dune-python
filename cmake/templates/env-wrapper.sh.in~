@@ -1,7 +1,0 @@
-#!/bin/bash
-
-source @DUNE_VIRTUALENV_PATH@/activate
-$@
-ret=$?
-deactivate
-exit $ret

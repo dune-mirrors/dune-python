@@ -4,7 +4,7 @@
 # It is used for all unix-like systems.
 #
 
-source @DUNE_VIRTUALENV_PATH@/activate
+source @DUNE_VIRTUALENV_PATH@/bin/activate
 $@
 ret=$?
 deactivate
