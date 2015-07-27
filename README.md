@@ -1,15 +1,11 @@
-***************************************************************
-*                   What is dune-python?                      *
-***************************************************************
+# What is dune-python?
 
 dune-python provides infrastructure for dune modules that do
 ship python packages. That infrastructure is integrated into
 the dune build system. For more information, check the documents
 in the doc subfolder.
 
-***************************************************************
-*                      Acknowledgments                        *
-***************************************************************
+# Acknowledgments
 
 The work by Timo Koch and Dominic Kempf is supported by the
 ministry of science, research and arts of the federal state of
