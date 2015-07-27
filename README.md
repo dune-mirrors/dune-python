@@ -20,7 +20,7 @@ When developing a dune module, you should do the following:
 * Have your dune module depend on dune-python
 * Put all your python code into the subdirectory `python`
   in your module. While this is not technically necessary,
-  it simplifies grasping how modules are strucured.
+  it simplifies grasping how modules are structured.
 * Write your python code as `pip`-installable packages.
   Comprehensive information on how to do that can be found
   [here](https://packaging.python.org/en/latest/distributing.html).
@@ -49,6 +49,7 @@ Every module that depends on dune-python will have a set of scripts
 in its build directory to access the virtualenv. Currently those are:
 * `dune-env.sh` runs the command given by its arguments within the
   virtualenv and returns the return value.
+
 This list is subject to grow as we identify the needs of others.
 
 Note, that the virtualenv has access to the system site packages
