@@ -60,6 +60,12 @@ packages inside the virtualenv, that ar enot present on the host system.
 Portability is not yet implemented (but can be achieved within CMake),
 so dune-python is currently limited to UNIX systems.
 
+# Getting help
+
+If you have any questions about dune-python, please contact
+
+Dominic Kempf [dominic.kempf@iwr.uni-heidelberg.de](mailto:dominic.kempf@iwr.uni-heidelberg.de)
+
 # Acknowledgments
 
 The work by Timo Koch and Dominic Kempf is supported by the
