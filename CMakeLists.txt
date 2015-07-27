@@ -18,7 +18,6 @@ include(DuneMacros)
 # start a dune project with information from dune.module
 dune_project()
 
-add_subdirectory("doc")
 add_subdirectory("cmake/modules")
 
 dune_install_python_package(PATH python)
