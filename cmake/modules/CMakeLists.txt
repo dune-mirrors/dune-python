@@ -9,4 +9,6 @@ install(FILES CheckPythonPackage.cmake
 # permissions of the configured file manually.
 install(FILES env-wrapper.sh.in
         DESTINATION ${DUNE_INSTALL_MODULEDIR}
-        PERMISSIONS WORLD_EXECUTE WORLD_READ)
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                    GROUP_READ GROUP_EXECUTE
+                    WORLD_READ WORLD_EXECUTE)
