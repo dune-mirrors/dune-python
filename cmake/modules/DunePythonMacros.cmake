@@ -21,6 +21,10 @@ foreach(mod ${${CMAKE_PROJECT_NAME}_DEPENDS} ${${CMAKE_PROJECT_NAME}_SUGGESTS})
   if(IS_DIRECTORY ${${mod}_DIR}/python-env)
     set(DUNE_VIRTUALENV_PATH ${${mod}_DIR}/python-env)
   endif()
+  # check in the current build directory - this might be a reconfigure
+  if(IS_DIRECTORY ${CMAKE_BINARY_DIR}/python-env)
+    set(DUNE_VIRTUALENV_PATH ${CMAKE_BINARY_DIR}/python-env)
+  endif()
 endforeach()
 
 # If none was found, we need to create a new one.
