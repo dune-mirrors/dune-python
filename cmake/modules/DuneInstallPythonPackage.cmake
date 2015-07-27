@@ -35,7 +35,7 @@ function(dune_install_python_package)
   endif()
 
   # iterate over the given interpreters
-  foreach(version ${PYINST_MAHOR_VERSION})
+  foreach(version ${PYINST_MAJOR_VERSION})
     # install the package into the virtual env
     execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version}.sh pip install -e .
                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
@@ -50,7 +50,7 @@ function(dune_install_python_package)
                                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
                    ")
     else()
-      install(CODE "message(FATAL_ERROR \"You need pip installed on the host system to install a module that contains python code\")")
+      install(CODE "message(FATAL_ERROR \"You need pip${version} installed on the host system to install a module that contains python code\")")
     endif()
   endforeach()
 endfunction()
