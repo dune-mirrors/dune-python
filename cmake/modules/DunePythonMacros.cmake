@@ -4,8 +4,15 @@ include(CheckPythonPackage)
 include(DuneInstallPythonPackage)
 include(PythonVersion)
 
-# The code we do want to execute whenever a module that requires or suggests dune-python is configured
-find_package(PythonInterp REQUIRED)
+# Look for python interpreters. CMake is okay at finding Python2 or Python3,
+# but sucks at finding both. We try working around the problem...
+find_package(Python3Interp)
+find_package(PythonInterp)
+if(NOT PYTHON3INTERP_FOUND AND NOT PYTHONINTERP_FOUND)
+  message(FATAL_ERROR "Could not determine the location of your python interpreter")
+endif()
+
+# Look for python packages that we need on the host system
 check_python_package(PACKAGE virtualenv)
 check_python_package(PACKAGE pip)
 
