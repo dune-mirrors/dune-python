@@ -44,5 +44,3 @@ create_virtualenv(NAME python3-env
                   REAL_PATH DUNE_VIRTUALENV_PATH
                   INTERPRETER ${PYTHON3_EXECUTABLE})
 configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/dune-env-3.sh)
-
-# TODO think about when and how to disable those.

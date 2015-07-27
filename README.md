@@ -59,6 +59,11 @@ Note, that the virtualenv has access to the system site packages
 ones). Still, you do need internet connection to install python
 packages inside the virtualenv, that ar enot present on the host system.
 
+The packages are installed in the virtualenv with `pip --editable`,
+which is the equivalent of `python setup.py develop`. That means
+you can work on the python code in your module without upgrading
+the virtualenv manually.
+
 Portability is not yet implemented (but can be achieved within CMake),
 so dune-python is currently limited to UNIX systems.
 
