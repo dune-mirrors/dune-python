@@ -7,7 +7,7 @@ include(PythonVersion)
 # Look for python interpreters. CMake is okay at finding Python2 or Python3,
 # but sucks at finding both. We try working around the problem...
 find_package(Python3Interp)
-find_package(PythonInterp)
+find_package(PythonInterp 2)
 if(NOT PYTHON3INTERP_FOUND AND NOT PYTHONINTERP_FOUND)
   message(FATAL_ERROR "Could not determine the location of your python interpreter")
 endif()
@@ -36,12 +36,12 @@ endforeach()
 
 # If none was found, we need to create a new one.
 if(NOT DUNE_VIRTUALENV_PATH)
-  if(DUNE_PYTHON_virtualenv_FOUND)
+  if(PYTHONINTERP_FOUND AND DUNE_PYTHON2_virtualenv_FOUND)
     message("Building a virtual env in ${CMAKE_BINARY_DIR}/python-env...")
     execute_process(COMMAND virtualenv -p ${PYTHON_EXECUTABLE} --system-site-packages ${CMAKE_BINARY_DIR}/python-env)
     set(DUNE_VIRTUALENV_PATH ${CMAKE_BINARY_DIR}/python-env)
   else()
-    message(FATAL_ERROR "You do need the python package virtualenv installed to build the module ${CMAKE_PROJECT_NAME} locally!")
+    message(FATAL_ERROR "You do need the python2 package virtualenv installed to build the module ${CMAKE_PROJECT_NAME} locally!")
   endif()
 endif()
 

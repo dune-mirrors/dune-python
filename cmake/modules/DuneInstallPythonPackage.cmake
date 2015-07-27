@@ -21,7 +21,7 @@ function(dune_install_python_package)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYINST "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
   if(PYINST_UNPARSED_ARGUMENTS)
-    message(WARNING "Unparsed arguments in dune_install_python_packge: This often indicates typos!")
+    message(WARNING "Unparsed arguments in dune_install_python_package: This often indicates typos!")
   endif()
 
   # install the package into the virtual env
@@ -29,7 +29,7 @@ function(dune_install_python_package)
                   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
 
   # define a rule on how to install the package during make install
-  if(DUNE_PYTHON_pip_FOUND)
+  if(DUNE_PYTHON2_pip_FOUND)
     set(USER_STRING "")
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING "--user ${DUNE_PYTHON_INSTALL_USER}")

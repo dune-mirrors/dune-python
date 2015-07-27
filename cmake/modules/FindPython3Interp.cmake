@@ -29,8 +29,6 @@ unset(PYTHON_EXECUTABLE CACHE)
 set(PYTHONINTERP_FOUND FALSE)
 
 find_package(PythonInterp 3)
-message("PYTHONINTERP_FOUND: ${PYTHONINTERP_FOUND}")
-message("PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
 find_package_handle_standard_args(Python3Interp
                                   REQUIRED_VARS PYTHONINTERP_FOUND)
 
