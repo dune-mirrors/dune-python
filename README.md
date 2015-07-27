@@ -41,14 +41,16 @@ is the python way of achieving this goal.
 
 To minimize needed disk space and to enable complex interplay between
 python packages provided by different module, dune-python will create
-but one virtualenv, no matter how many Dune modules provide python
-packages. That virtualenv lives in the build directory of the first
-non-installed module of the build stack.
+but one virtualenv per python version, no matter how many Dune modules
+provide python packages. That virtualenv lives in the build directory
+of the first non-installed module of the build stack.
 
 Every module that depends on dune-python will have a set of scripts
 in its build directory to access the virtualenv. Currently those are:
-* `dune-env.sh` runs the command given by its arguments within the
-  virtualenv and returns the return value.
+* `dune-env-2.sh` runs the command given by its arguments within the
+  python2 virtualenv and returns the return value.
+* `dune-env-3.sh` runs the command given by its arguments within the
+  python3 virtualenv and returns the return value.
 
 This list is subject to grow as we identify the needs of others.
 
@@ -59,6 +61,21 @@ packages inside the virtualenv, that ar enot present on the host system.
 
 Portability is not yet implemented (but can be achieved within CMake),
 so dune-python is currently limited to UNIX systems.
+
+# Python2 vs. Python3
+
+The transition from python2 to python3 is a major issue when treating
+build system issues. dune-python aims at full support for both python2
+and python3.
+
+There are two virtualenvs: One for python2, one for python3. All scripts
+have the version number in their naming.
+
+If your python package is written to support both python2 and python3
+you should not be forced to take specific measures. If you do not support
+one of them, read the documentation of the cmake modules in dune-python/cmake/modules
+carefully. All macros offer some parameters to customize the build process
+for different python versions.
 
 # Getting help
 

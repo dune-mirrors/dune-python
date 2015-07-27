@@ -2,7 +2,8 @@
 # only use this macro in the context of dune-python if you really need the
 # package to be present on the host. Any dependencies of your python packages
 # will instead be installed into the dune-python virtualenv. dune-python
-# uses this module to check for the existence of python-virtualenv.
+# uses this module to check for the existence of python-virtualenv
+# and python-pip.
 #
 # check_python_package(PACKAGE package
 #                     [MAJOR_VERSION version]
