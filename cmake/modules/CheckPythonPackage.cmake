@@ -2,29 +2,29 @@
 # only use this macro in the context of dune-python if you really need the
 # package to be present on the host. Any dependencies of your python packages
 # will instead be installed into the dune-python virtualenv. dune-python
-# uses this module to check for the existence of python-virtualenv
-# and python-pip.
+# uses this module to check for the existence of the virtualenv and pip packages.
 #
 # check_python_package(PACKAGE package
-#                     [MAJOR_VERSION version]
+#                     [RESULT result_var]
+#                     [INTERPRETER interpreter]
 #                     [REQUIRED])
 #
 # Checks for the existence of the given package on the host system. The variable
-# DUNE_PYTHON<interpmajor>_<package>_FOUND will be set correctly afterwards. 
-# interpmajor is 2 or 3, given the version number of the python interpreter.
-# By default, the python2 and python3 interpreters found by the cmake buildsystem
-# are checked. If you only want to check for python2 or python3 packages, pass
-# either 2 or 3 to the MAJOR_VERSION parameter.
+# result_var specified by the RESULT parameter will be set correctly afterwards.
+# If omitted, the variable DUNE_PYTHON_<package>_FOUND will be set.
+#
+# If the INTERPRETER option is set the given interpreters search paths will be
+# used for the package. If you use this option, you should also specify the RESULT
+# parameter to avoid conflicts. Giving an invalid interpreter will result in the
+# result to be set to false.
 #
 # If the REQUIRED option is set, the function will error out if the package is not
-# found. If you are looking for a python2 only package with the REQUIRED option,
-# remember to set MAJOR_VERSION to avoid a false positive.
-#
+# found.
 
 function(check_python_package)
   # Parse Arguments
   set(OPTION REQUIRED)
-  set(SINGLE PACKAGE MAJOR_VERSION)
+  set(SINGLE PACKAGE RESULT INTERPRETER)
   set(MULTI)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYCHECK "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
@@ -32,25 +32,28 @@ function(check_python_package)
     message(WARNING "Unparsed arguments in check_python_package: This often indicates typos!")
   endif()
 
-  # set a list of interpreters to use
-  if(NOT PYCHECK_MAJOR_VERSION)
-    set(PYCHECK_MAJOR_VERSION 2 3)
+  # apply defaults
+  if(NOT PYCHECK_INTERPRETER)
+    if(PYTHON3_EXECUTABLE)
+      set(PYCHECK_INTERPRETER ${PYTHON3_EXECUTABLE})
+    else()
+      set(PYCHECK_INTERPRETER ${PYTHON2_EXECUTABLE})
+    endif()
+  endif()
+  if(NOT PYCHECK_RESULT)
+    set(PYCHECK_RESULT DUNE_PYTHON_${PYCHECK_PACKAGE}_FOUND)
   endif()
 
-  # Iterate over the list of interpreters and look for the packages.
-  foreach(version ${PYCHECK_MAJOR_VERSION})
-    set(DUNE_PYTHON${version}_${PYCHECK_PACKAGE}_FOUND FALSE PARENT_SCOPE)
-    if(PYTHON${version}INTERP_FOUND)
-      execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -c "import ${PYCHECK_PACKAGE}" 
-                      RESULT_VARIABLE PYCHECK_RETURN
-                      ERROR_QUIET)
-      if(PYCHECK_RETURN STREQUAL "0")
-        set(DUNE_PYTHON${version}_${PYCHECK_PACKAGE}_FOUND TRUE PARENT_SCOPE)
-      else()
-        if(PYCHECK_REQUIRED)
-          message(FATAL_ERROR "The python package ${PYCHECK_PACKAGE} could not be found on the host system! (for python${version})")
-        endif()
-      endif()
+  # Do the actual check
+  execute_process(COMMAND ${PYCHECK_INTERPRETER} -c "import ${PYCHECK_PACKAGE}" 
+                  RESULT_VARIABLE PYCHECK_RETURN
+                  ERROR_QUIET)
+  if(PYCHECK_RETURN STREQUAL "0")
+    set(${PYCHECK_RESULT} TRUE PARENT_SCOPE)
+  else()
+    set(${PYCHECK_RESULT} FALSE PARENT_SCOPE)
+    if(PYCHECK_REQUIRED)
+      message(FATAL_ERROR "The python package ${PYCHECK_PACKAGE} could not be found on the host system! (for interpreter ${PYCHECK_INTERPRETER})")
     endif()
-  endforeach()
+  endif()
 endfunction()

@@ -1,6 +1,5 @@
 # include all macros that dune-python offers. They can be documented better if placed
 # in cmake modules grouped together by functionality
-include(CheckPythonPackage)
 include(CreateVirtualEnv)
 include(DuneInstallPythonPackage)
 include(PythonVersion)
@@ -12,10 +11,6 @@ find_package(Python2Interp)
 if(NOT PYTHON3INTERP_FOUND AND NOT PYTHON2INTERP_FOUND)
   message(FATAL_ERROR "Could not determine the location of your python interpreter")
 endif()
-
-# Look for python packages that we need on the host system
-check_python_package(PACKAGE virtualenv)
-check_python_package(PACKAGE pip)
 
 # Determine the directory, that the dune-python cmake macros are located
 # This actually depends on this module being dune-python itself, or some other

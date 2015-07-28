@@ -10,16 +10,21 @@
 #
 # This creates a virtualenv in the directory path/name, where path
 # defaults to the root of the current build directory.
+#
 # The python interpreter running in the virtualenv may be set through
 # the INTERPRETER parameter. If not set, it defaults to PYTHON2_EXECUTABLE.
 #
 # If the ONLY_ONCE parameter is set, cmake will look through all
 # build directories in the set of modules this module depends on
 # and only create a virtualenv, if no virtualenv has been created yet.
+# This only checks for virtualenvs in the toplevel build directories
+# of all those modules.
 #
 # The variable given to REAL_PATH will point to the requested virtualenv,
 # even if it is located in a different module.
 #
+
+include(CheckPythonPackage)
 
 function(create_virtualenv)
   # Parse Arguments
@@ -55,15 +60,32 @@ function(create_virtualenv)
     endforeach()
   endif()
 
-  # create virtualenv oly if really needed
+  # create virtualenv only if really needed
   if(NOT CREATE_ENV_ONLY_ONCE OR NOT VIRTUALENV_PATH)
-    if(PYTHON2INTERP_FOUND AND DUNE_PYTHON2_virtualenv_FOUND)
-      message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
-      execute_process(COMMAND virtualenv -p ${CREATE_ENV_INTERPRETER} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
-      set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
-    else()
-      message(FATAL_ERROR "You do need the python2 package virtualenv installed to build the module ${CMAKE_PROJECT_NAME} locally!")
+    # determine the name of the virtualenv package. Its either virtualenv or venv
+    set(VIRTUALENV_PACKAGE_NAME)
+    check_python_package(PACKAGE virtualenv
+                         INTERPRETER ${CREATE_ENV_INTERPRETER}
+                         RESULT VIRTUALENV_FOUND)
+    if(VIRTUALENV_FOUND)
+      set(VIRTUALENV_PACKAGE_NAME virtualenv)
     endif()
+    check_python_package(PACKAGE venv
+                         INTERPRETER ${CREATE_ENV_INTERPRETER}
+                         RESULT VENV_FOUND)
+    if(VENV_FOUND)
+      set(VIRTUALENV_PACKAGE_NAME venv)
+    endif()
+
+    # error out if none of the packages could be found.
+    if(NOT VIRTUALENV_PACKAGE_NAME)
+      message(FATAL_ERROR "You do not need either the package virtualenv or venv installed on the host system")
+    endif()
+
+    # build the actual thing
+    message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
+    execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+    set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
   endif()
 
   # Set the path to the virtualenv in the outer scope
