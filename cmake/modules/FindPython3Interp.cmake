@@ -29,7 +29,7 @@ set(PYTHONINTERP_FOUND FALSE)
 
 find_package(PythonInterp 3 QUIET)
 find_package_handle_standard_args(Python3Interp
-                                  REQUIRED_VARS PYTHONINTERP_FOUND)
+                                  REQUIRED_VARS PYTHON_EXECUTABLE)
 
 # Set all those variables that we promised
 set(PYTHON3_EXECUTABLE ${PYTHON_EXECUTABLE})

@@ -26,7 +26,7 @@ set(PYTHONINTERP_FOUND FALSE)
 
 find_package(PythonInterp 2 QUIET)
 find_package_handle_standard_args(Python2Interp
-                                  REQUIRED_VARS PYTHONINTERP_FOUND)
+                                  REQUIRED_VARS PYTHON_EXECUTABLE)
 
 # Set all those variables that we promised
 set(PYTHON2_EXECUTABLE ${PYTHON_EXECUTABLE})
