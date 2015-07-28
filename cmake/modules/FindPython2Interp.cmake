@@ -24,7 +24,7 @@
 unset(PYTHON_EXECUTABLE CACHE)
 set(PYTHONINTERP_FOUND FALSE)
 
-find_package(PythonInterp 2)
+find_package(PythonInterp 2 QUIET)
 find_package_handle_standard_args(Python2Interp
                                   REQUIRED_VARS PYTHONINTERP_FOUND)
 
