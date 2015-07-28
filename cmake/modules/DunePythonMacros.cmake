@@ -8,8 +8,8 @@ include(PythonVersion)
 # Look for python interpreters. CMake is okay at finding Python2 or Python3,
 # but sucks at finding both. We try working around the problem...
 find_package(Python3Interp)
-find_package(PythonInterp 2)
-if(NOT PYTHON3INTERP_FOUND AND NOT PYTHONINTERP_FOUND)
+find_package(Python2Interp)
+if(NOT PYTHON3INTERP_FOUND AND NOT PYTHON2INTERP_FOUND)
   message(FATAL_ERROR "Could not determine the location of your python interpreter")
 endif()
 

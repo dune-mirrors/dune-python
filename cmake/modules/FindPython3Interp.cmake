@@ -6,9 +6,8 @@
 # interpreters within the same project, which does not seem possible
 # with the modules provided from upstream.
 #
-# When using this to look for Python3 AND Python2, make sure to first
-# look for Python3, because this module will affect your cache entries
-# related to previous calls to python2.
+# When using this to look for Python3, you should use
+# FindPython2Interp.cmake to look for the Python2 interpreter.
 #
 # This module sets the following variables:
 #

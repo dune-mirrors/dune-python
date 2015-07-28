@@ -11,7 +11,7 @@
 # This creates a virtualenv in the directory path/name, where path
 # defaults to the root of the current build directory.
 # The python interpreter running in the virtualenv may be set through
-# the INTERPRETER parameter. If not set, it defaults to PYTHON_EXECUTABLE.
+# the INTERPRETER parameter. If not set, it defaults to PYTHON2_EXECUTABLE.
 #
 # If the ONLY_ONCE parameter is set, cmake will look through all
 # build directories in the set of modules this module depends on
@@ -34,7 +34,7 @@ function(create_virtualenv)
 
   # apply defaults
   if(NOT CREATE_ENV_INTERPRETER)
-    set(CREATE_ENV_INTERPRETER ${PYTHON_EXECUTABLE})
+    set(CREATE_ENV_INTERPRETER ${PYTHON2_EXECUTABLE})
   endif()
   if(NOT CREATE_ENV_PATH)
     set(CREATE_ENV_PATH ${CMAKE_BINARY_DIR})
@@ -57,7 +57,7 @@ function(create_virtualenv)
 
   # create virtualenv oly if really needed
   if(NOT CREATE_ENV_ONLY_ONCE OR NOT VIRTUALENV_PATH)
-    if(PYTHONINTERP_FOUND AND DUNE_PYTHON2_virtualenv_FOUND)
+    if(PYTHON2INTERP_FOUND AND DUNE_PYTHON2_virtualenv_FOUND)
       message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
       execute_process(COMMAND virtualenv -p ${CREATE_ENV_INTERPRETER} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
       set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})

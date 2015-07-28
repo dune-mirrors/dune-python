@@ -37,10 +37,6 @@ function(check_python_package)
     set(PYCHECK_MAJOR_VERSION 2 3)
   endif()
 
-  # provide a shortcut to allow easily constructing interpreter variables
-  set(PYTHON2_EXECUTABLE ${PYTHON_EXECUTABLE})
-  set(PYTHON2INTERP_FOUND ${PYTHONINTERP_FOUND})
-
   # Iterate over the list of interpreters and look for the packages.
   foreach(version ${PYCHECK_MAJOR_VERSION})
     set(DUNE_PYTHON${version}_${PYCHECK_PACKAGE}_FOUND FALSE PARENT_SCOPE)

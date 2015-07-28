@@ -13,7 +13,7 @@ macro(dune_require_python_version version)
   list(GET versionlist 0 major)
   if("${major}" STREQUAL "2")
     # This is a python2 requirement.
-    if(NOT PYTHONINTERP_FOUND OR PYTHON_VERSION_STRING VERSION_LESS ${version})
+    if(NOT PYTHON2INTERP_FOUND OR PYTHON_VERSION_STRING VERSION_LESS ${version})
       message(FATAL_ERROR "${CMAKE_PROJECT_NAME} requires at least python ${version}")
     endif()
   else()
