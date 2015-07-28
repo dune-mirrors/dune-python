@@ -40,6 +40,18 @@
 /* Define to the revision of dune-python */
 #define DUNE_PYTHON_VERSION_REVISION @DUNE_PYTHON_VERSION_REVISION@
 
+/* Whether a python2 interpreter has been found on the system */
+#define HAVE_PYTHON2_EXECUTABLE @PYTHON2INTERP_FOUND@
+
+/* Whether a python3 interpreter has been found on the system */
+#define HAVE_PYTHON3_EXECUTABLE @PYTHON3INTERP_FOUND@
+
+/* Export the python2 interpreter found by the CMake build system */
+#define PYTHON2_EXECUTABLE @PYTHON2_EXECUTABLE@
+
+/* Export the python2 interpreter found by the CMake build system */
+#define PYTHON3_EXECUTABLE @PYTHON3_EXECUTABLE@
+
 /* end dune-python
    Everything below here will be overwritten
 */
