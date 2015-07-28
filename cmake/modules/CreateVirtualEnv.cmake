@@ -82,10 +82,38 @@ function(create_virtualenv)
       message(FATAL_ERROR "You do not need either the package virtualenv or venv installed on the host system")
     endif()
 
-    # build the actual thing
-    message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
-    execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
-    set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+    # Work around ubuntu bug https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847
+    # Idea of the workaround: Install without pip and then easy_install pip into it.
+    # As soon as the upstream bug is fixed, this entire if block should be deleted in favor
+    # of the else block.
+    if(EXISTS /etc/dpkg/origins/ubuntu AND "${VIRTUALENV_PACKAGE_NAME}" STREQUAL "venv")
+      message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
+      message("Falling back to terrible things to workaround Ubuntu bugs...")
+      check_python_package(PACKAGE easy_install
+                           INTERPRETER ${CREATE_ENV_INTERPRETER}
+                           RESULT EASY_INSTALL_FOUND
+                           REQUIRED)
+      # First install with --without-pip
+      execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME}
+                        --system-site-packages --without-pip ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+      set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+      # Get a shell wrapper around the created virtualenv
+      if(CMAKE_PROJECT_NAME STREQUAL dune-python)
+        set(DUNE_PYTHON_TEMPLATES_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+      else()
+        set(DUNE_PYTHON_TEMPLATES_PATH ${dune-python_MODULE_PATH})
+      endif()
+      set(DUNE_VIRTUALENV_PATH ${VIRTUALENV_PATH})
+      configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/easy_install-env.sh)
+      # Now install pip into the virtualenv through easy_install
+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/easy_install-env.sh python -m easy_install pip)
+      file(REMOVE ${CMAKE_BINARY_DIR}/easy_install-env.sh)
+    else()
+      # build the actual thing
+      message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
+      execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+      set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+    endif()
   endif()
 
   # Set the path to the virtualenv in the outer scope
