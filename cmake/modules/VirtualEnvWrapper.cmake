@@ -65,7 +65,10 @@ function(create_virtualenv_wrapper)
   endforeach()
   set(DUNE_VIRTUALENV_PATH ${ENV_WRAPPER_ENVPATH})
 
+  # Write a message about generating the script.
+  message("-- Writing a wrapper script around virtualenv to ${ENV_WRAPPER_PATH}/${ENV_WRAPPER_NAME}")
+
   # use configure_file to actually write a wrapper script
   configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.${DUNE_PYTHON_SCRIPT_EXT}.in
-                 ${ENV_WRAPPER_PATH}/${ENV_WRAPPER_NAME}.${DUNE_PYTHON_SCRIPT_EXT})
+                 ${ENV_WRAPPER_PATH}/${ENV_WRAPPER_NAME})
 endfunction()

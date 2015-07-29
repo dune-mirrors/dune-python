@@ -47,7 +47,7 @@ function(dune_install_python_package)
   # iterate over the given interpreters
   foreach(version ${PYINST_MAJOR_VERSION})
     # install the package into the virtual env
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version}.sh pip install -e .
+    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} pip install -e .
                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
 
     # define a rule on how to install the package during make install
