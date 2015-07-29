@@ -34,7 +34,7 @@ function(create_virtualenv)
   include(CMakeParseArguments)
   cmake_parse_arguments(CREATE_ENV "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
   if(CREATE_ENV_UNPARSED_ARGUMENTS)
-    message(WARNING "Unparsed arguments in check_python_package: This often indicates typos!")
+    message(WARNING "Unparsed arguments in create_virtualenv: This often indicates typos!")
   endif()
 
   # apply defaults
