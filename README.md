@@ -47,12 +47,18 @@ of the first non-installed module of the build stack.
 
 Every module that depends on dune-python will have a set of scripts
 in its build directory to access the virtualenv. Currently those are:
-* `dune-env-2.sh` runs the command given by its arguments within the
-  python2 virtualenv and returns the return value.
-* `dune-env-3.sh` runs the command given by its arguments within the
-  python3 virtualenv and returns the return value.
+* `dune-env-{2,3}` runs the command given by its arguments within the
+  python{2,3} virtualenv and returns the return value.
+* `dune-env` is the same as above with python3 if available and python2
+  otherwise.
+* `python{2,3}` gives you a python2 or python3 interpreter running in
+  the virtualenv
+* `python` is the same as above with python3 if available and python2
+  otherwise.
 
-This list is subject to grow as we identify the needs of others.
+Note, that those scripts are bash scripts. However, the extension `sh`
+has been dropped to allow to write portable code. Implementations
+of those scripts for other platforms can be implemented if needed.
 
 Note, that the virtualenv has access to the system site packages
 (otherwise you couldn't combine installed dune modules with local
