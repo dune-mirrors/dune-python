@@ -1,6 +1,7 @@
 # Macros to write wrappers around the virtualenvs created.
 #
 # create_virtualenv_wrapper(ENVPATH path
+#                          [COMMANDS cmd1 cmd2 ...]
 #                          [PATH scriptpath]
 #                          [NAME name])
 #
@@ -13,6 +14,14 @@
 # The generated script will be placed in the directory specified
 # with the PATH parameter. Defaults to the (root) build directory
 # of the current module.
+#
+# If one or more commands are given those commands will be executed
+# pasted before the command string given from the command line.
+# Example: passing 'python' as command will create a script that
+# opens an interactive interpreter running in the virtualenv.
+#
+#
+
 
 # Determine the directory, that the dune-python cmake macros are located
 # This actually depends on this module being dune-python itself, or some other
@@ -30,7 +39,7 @@ function(create_virtualenv_wrapper)
   # Parse Arguments
   set(OPTION)
   set(SINGLE ENVPATH PATH NAME)
-  set(MULTI)
+  set(MULTI COMMANDS)
   include(CMakeParseArguments)
   cmake_parse_arguments(ENV_WRAPPER "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
   if(ENV_WRAPPER_UNPARSED_ARGUMENTS)
@@ -48,6 +57,13 @@ function(create_virtualenv_wrapper)
   if(NOT ENV_WRAPPER_PATH)
     set(ENV_WRAPPER_PATH ${CMAKE_BINARY_DIR})
   endif()
+
+  # set the variables for substitution in the wrapper script
+  set(DUNE_VIRTUALENV_COMMANDS "")
+  foreach(command ${ENV_WRAPPER_COMMANDS})
+    set(DUNE_VIRTUALENV_COMMANDS "${DUNE_VIRTUALENV_COMMANDS} ${command}")
+  endforeach()
+  set(DUNE_VIRTUALENV_PATH ${ENV_WRAPPER_ENVPATH})
 
   # use configure_file to actually write a wrapper script
   configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.${DUNE_PYTHON_SCRIPT_EXT}.in

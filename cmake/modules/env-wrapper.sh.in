@@ -5,7 +5,7 @@
 #
 
 source @DUNE_VIRTUALENV_PATH@/bin/activate
-$@
+@DUNE_VIRTUALENV_COMMANDS@ $@
 ret=$?
 deactivate
 exit $ret
