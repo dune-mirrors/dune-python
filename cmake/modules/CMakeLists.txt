@@ -1,7 +1,11 @@
 install(FILES CheckPythonPackage.cmake
-              InstallPythonPackage.cmake
+              CreateVirtualEnv.cmake
               DunePythonMacros.cmake
+              FindPython2Interp.cmake
+              FindPython3Interp.cmake
+              InstallPythonPackage.cmake
               PythonVersion.cmake
+              VirtualEnvWrapper.cmake
         DESTINATION ${DUNE_INSTALL_MODULEDIR})
 
 # The wrapper templates need to be executable, even
