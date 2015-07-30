@@ -4,6 +4,7 @@ install(FILES CheckPythonPackage.cmake
               FindPython2Interp.cmake
               FindPython3Interp.cmake
               InstallPythonPackage.cmake
+              InstallPythonScript.cmake
               PythonVersion.cmake
               VirtualEnvWrapper.cmake
         DESTINATION ${DUNE_INSTALL_MODULEDIR})
