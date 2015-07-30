@@ -1,5 +1,5 @@
 install(FILES CheckPythonPackage.cmake
-              DuneInstallPythonPackage.cmake
+              InstallPythonPackage.cmake
               DunePythonMacros.cmake
               PythonVersion.cmake
         DESTINATION ${DUNE_INSTALL_MODULEDIR})
