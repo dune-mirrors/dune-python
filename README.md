@@ -31,6 +31,11 @@ When developing a dune module, you should do the following:
   This will install the package into a virtualenv (see below)
   at configure time and will globally install it during
   `make install`.
+* As an alternative to writing a `pip`-installable package,
+  dune-python can handle executable python scripts and their
+  upstream dependencies manually. Use the macro
+  `dune_install_python_script(SCRIPT script)`
+  in that case.
 
 # The Dune virtualenv
 
