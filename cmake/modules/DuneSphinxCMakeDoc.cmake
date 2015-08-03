@@ -9,10 +9,6 @@
 # * One such block is at the beginning of every module and
 #   describes the general handling of the module
 #
-
-dune_install_python_script(SCRIPT extract_cmake_data.py)
-
-
 # .. cmake_function:: dune_cmake_sphinx_doc
 #
 #    .. cmake_param:: PATHS
@@ -49,6 +45,9 @@ dune_install_python_script(SCRIPT extract_cmake_data.py)
 #    of the documentation is the current build directory (aka the
 #    directory that this function is called from)
 #
+
+dune_install_python_script(SCRIPT extract_cmake_data.py)
+
 function(dune_cmake_sphinx_doc)
   # Only proceed if Sphinx was found on the system
   if(NOT SPHINX_FOUND)

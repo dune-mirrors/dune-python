@@ -105,105 +105,10 @@ class CMakeParam(Directive):
         node['argname'] = self.options.get('argname', self.arguments[0].lower() if self.arguments[0].lower()[-1:] != 's' else self.arguments[0].lower()[:-1])
         node['content'] = self.content
         return [node]
-        
-
-# class CMakeCommand(Directive):
-#     required_arguments = 1
-# 
-#     def run(self, obj):
-#         target = nodes.target()
-#         lineno = self.state_machine.abs_line_number()
-#         self.state.add_target(self.arguments[0], '', target, lineno)
-#         return [target]
-
-# class CMakeDocParser(object):
-#     def __init__(self, module='/home/dominic/dune/dune-python/cmake/modules/PythonVersion.cmake'):
-#         self.module = module
-#         self.blocks = {}
-# 
-#         # determine the comment blocks
-#         self.blocks = []
-#         start = -1
-#         f = open(module, 'r')
-#         for i, line in enumerate(f):
-#             if start == -1:
-#                 if line.startswith('#'):
-#                     start = i
-#             else:
-#                 if not line.startswith('#'):
-#                     self.blocks.append((start, i))
-#                     start = -1
-#     
-#     def extract(self, start, end):
-#         with open(self.module, 'r') as f:
-#             for i, l in enumerate(f):
-#                 if i >= start and i<end:
-#                     yield l[2:]
-#     
-#     def get_block(self, number):
-#         return [l for l in self.extract(self.blocks[number][0], self.blocks[number][1])]
-# 
-# 
-# class cmake_module_node(nodes.Structural, nodes.Element):
-#     pass
-# 
-# 
-# def visit_cmake_module_node(self, node):
-#     self.visit(node)
-# #     self.visit_text(node)
-# 
-# 
-# def depart_cmake_module_node(self, node):
-#     self.visit(node)
-#     pass
-# #     self.depart_text(node)
-# 
-# 
-# class CMakeModule(Directive):
-#     required_arguments = 1
-#     optional_arguments = 0
-#     final_argument_whitespace = 0
-#     has_content = False
-#     
-#     def __init__(self, *args, **kwargs):
-#         Directive.__init__(self, *args, **kwargs)
-#     
-#     def run(self):
-#         # extract the module and parse it
-#         module = self.arguments[0]
-#         parser = CMakeDocParser(module)
-#         
-#         # create a section
-#         import os.path
-#         modname = os.path.basename(module)
-#         idm = nodes.make_id(modname)
-#         section = nodes.section(ids=[idm])
-#         
-#         #
-#         from docutils.statemachine import ViewList
-#         l = ViewList(initlist=parser.get_block(0))
-#         
-#         from IPython import embed; embed()
-#         
-#         # Now parse the rst from the cmake module in nested fashion
-#         par = nodes.paragraph()
-#         self.state.nested_parse(l, self.content_offset, par)
-#         
-#         # create the resulting node
-#         n = cmake_module_node()
-#         n += section
-#         n += par
-# 
-#         return [n]
-
 
 def setup(app):
-    print "CMake Extensions setup"
-#     app.add_lexer('cmake', CMakeLexer())
     app.add_node(CMakeParamNode)
     app.add_directive('cmake_function', CMakeFunction)
     app.add_directive('cmake_param', CMakeParam)
-#     app.add_node(cmake_module_node)#, html=(visit_cmake_module_node, depart_cmake_module_node))
-#     app.add_directive("cmake_module", CMakeModule)
     
     return {'version': '0.1'}
