@@ -4,7 +4,7 @@
 # the CMake modules is written:
 #
 # * There are blocks that are written in restructured text.
-#   The first two characters of each line (:code:`# `) are ignored
+#   The first two characters of each line :code:`# ` are ignored
 #   Any resulting content of lines most form valid rst.
 # * One such block is at the beginning of every module and
 #   describes the general handling of the module
