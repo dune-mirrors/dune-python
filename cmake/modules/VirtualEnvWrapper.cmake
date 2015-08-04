@@ -1,25 +1,35 @@
 # Macros to write wrappers around the virtualenvs created.
+# This is used internally by dune-python to create wrappers.
+# You may still use it to create custom wrappers if needed.
 #
-# create_virtualenv_wrapper(ENVPATH path
-#                          [COMMANDS cmd1 cmd2 ...]
-#                          [PATH scriptpath]
-#                          [NAME name])
+# .. cmake_function:: create_virtualenv_wrapper
 #
-# Write a wrapper script around the virtualenv located at the
-# path given to the ENVPATH argument.
+#    .. cmake_param:: ENVPATH
+#       :single:
+#       :required:
+#       :argname: path
 #
-# You may set the NAME parameter to manually set the name of
-# the wrapper script. Defaults to the name of the virtualenv.
+#       Directory that the virtualenv to wrap is located
 #
-# The generated script will be placed in the directory specified
-# with the PATH parameter. Defaults to the (root) build directory
-# of the current module.
+#    .. cmake_param:: COMMANDS
+#       :multi:
 #
-# If one or more commands are given those commands will be executed
-# pasted before the command string given from the command line.
-# Example: passing 'python' as command will create a script that
-# opens an interactive interpreter running in the virtualenv.
+#       The given commands will be pasted before the command
+#       string given from the command line. Example: passing
+#       :code:`python` as command will create a script that
+#       opens an interactive interpreter running in the virtualenv.
 #
+#    .. cmake_param:: PATH
+#       :single:
+#
+#       Directory to place the generated script in.
+#       Defaults to the (root) build directory of the current module.
+#
+#    .. cmake_param: NAME
+#       :single:
+#
+#       The name of the wrapper script. Defaults to the name of
+#       the virtualenv.
 #
 
 
