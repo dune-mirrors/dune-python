@@ -1,25 +1,44 @@
-# Find a given python package on the host system. Note, that you should
-# only use this macro in the context of dune-python if you really need the
-# package to be present on the host. Any dependencies of your python packages
-# will instead be installed into the dune-python virtualenv. dune-python
-# uses this module to check for the existence of the virtualenv and pip packages.
+# This module provides functions to check for the existence of
+# certain python packages on the host system.
 #
-# check_python_package(PACKAGE package
-#                     [RESULT result_var]
-#                     [INTERPRETER interpreter]
-#                     [REQUIRED])
+# .. cmake_function:: check_python_package
 #
-# Checks for the existence of the given package on the host system. The variable
-# result_var specified by the RESULT parameter will be set correctly afterwards.
-# If omitted, the variable DUNE_PYTHON_<package>_FOUND will be set.
+#    .. cmake_param:: PACKAGE
+#       :required:
+#       :single:
 #
-# If the INTERPRETER option is set the given interpreters search paths will be
-# used for the package. If you use this option, you should also specify the RESULT
-# parameter to avoid conflicts. Giving an invalid interpreter will result in the
-# result to be set to false.
+#       The package name to look for.
 #
-# If the REQUIRED option is set, the function will error out if the package is not
-# found.
+#    .. cmake_param: RESULT
+#       :single:
+#
+#       The variable to store the result of the check in
+#       in the calling scope. Defaults to DUNE_PYTHON_<package>_FOUND
+#       Note that the package name is case sensitive and will
+#       usually be lowercase.
+#
+#    .. cmake_param:: INTERPRETER
+#       :single:
+#
+#       If set, the given interpreters search paths will be
+#       used for the package. If you use this option, you should also
+#       specify the RESULT parameter to avoid conflicts. Giving an
+#       invalid interpreter will result in the result to be set to false.
+#       Defaults to the found Python3 interpreter if present and the
+#       found Python2 interpreter otherwise.
+#
+#    .. cmake_param:: REQUIRED
+#       :option:
+#
+#       If  set, the function will error out if the package is not
+#       found.
+#
+#
+#    Find a given python package on the host system. Note, that you should
+#    only use this macro in the context of dune-python if you really need the
+#    package to be present on the host. Any dependencies of your python packages
+#    will instead be installed into the dune-python virtualenv. dune-python
+#    uses this module to check for the existence of the virtualenv and pip packages.
 
 function(check_python_package)
   # Parse Arguments

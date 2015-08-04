@@ -1,3 +1,16 @@
+# The cmake code to execute whenever a module requires or suggests dune-python.
+#
+# A summary of what is done:
+#
+# * All cmake modules from dune-python are included. This allows usage of
+#   dune-python without taking care of module inclusion.
+# * The python2 and python3 interpreters on the host system are searched
+# * For both the python2 and python3 interpreter, a virtualenv is created.
+#   This virtualenv is shared between all dune modules. Wrappers to activate
+#   the virtualenv are placed in every build directory. Check :ref:`virtualenv`
+#   for details
+#
+
 # include all macros that dune-python offers. They can be documented better if placed
 # in cmake modules grouped together by functionality
 include(CreateVirtualEnv)

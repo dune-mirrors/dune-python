@@ -1,27 +1,46 @@
-# The macro that actually creates the virtualenv. May be used to create
-# custom virtualenvs out of cmake if needed, but meant for internal usage
-# mainly.
+# This module provides the code that creates the Dune virtualenvs.
+# See :ref:`virtualenv` for details on what
+# the Dune virtualenvs are used for.
 #
-# create_virtualenv(NAME name
-#                  [PATH path]
-#                  [REAL_PATH real_path]
-#                  [ONLY_ONCE]
-#                  [INTERPRETER interpreter])
+# As a normal user, you should not need to use this macro directly.
+# You may still do so if you need to create custom virtualenvs at
+# configure time.
 #
-# This creates a virtualenv in the directory path/name, where path
-# defaults to the root of the current build directory.
+# .. cmake_function:: create_virtualenv
 #
-# The python interpreter running in the virtualenv may be set through
-# the INTERPRETER parameter. If not set, it defaults to PYTHON2_EXECUTABLE.
+#    .. cmake_param:: NAME
+#       :single:
+#       :required:
 #
-# If the ONLY_ONCE parameter is set, cmake will look through all
-# build directories in the set of modules this module depends on
-# and only create a virtualenv, if no virtualenv has been created yet.
-# This only checks for virtualenvs in the toplevel build directories
-# of all those modules.
+#       Sets the name of the directory that the virtualenv is placed in.
+#       This is also used to identify virtualenvs for the :code:`ONLY_ONCE` option.
 #
-# The variable given to REAL_PATH will point to the requested virtualenv,
-# even if it is located in a different module.
+#    .. cmake_param:: PATH
+#       :single:
+#
+#       The working directory where to place virtualenv directory in.
+#       Defaults to the root build directory :code:`CMAKE_BINARY_DIR`.
+#
+#    .. cmake_param:: REAL_PATH
+#       :single:
+#
+#       The variable name given to this parameter will be set to the directory
+#       where the requested virtualenv is located. If used together with
+#       :code:`ONLY_ONCE`, this could point into a different modules' build directory.
+#
+#    .. cmake_param:: ONLY_ONCE
+#       :option:
+#
+#       If set, cmake will look through all build directories in the set of
+#       modules this module depends on and only create a virtualenv, if no
+#       virtualenv has been created yet. This only checks for virtualenvs in the
+#       toplevel build directories of all those modules.
+#
+#    .. cmake_param:: INTERPRETER
+#       :single:
+#
+#       The python interpreter to be used within the virtualenv. Defaults to
+#       :code:`PYTHON2_EXECUTABLE` defined by :ref:`FindPython2Interp`.
 #
 
 include(CheckPythonPackage)

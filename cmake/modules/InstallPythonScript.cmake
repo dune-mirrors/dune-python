@@ -1,25 +1,40 @@
-# Macro to install a single executable python script
+# Macro to install a single executable python script into
+# the dune-python virtualenv. For details on the virtualenv
+# concept see :ref:`virtualenv`.
 #
-# dune_install_python_script(SCRIPT script [script2 ...]
-#                           [MAJOR_VERSION version]
-#                           [REQUIRES requ1 [requ2 ...]])
+# .. cmake_function:: dune_install_python_script
 #
-# Installs a script into the virtualenv(s) created by dune-python.
-# It is placed in the bin folder of the env. You should write
-# your python scripts with a shebang such as:
-# #!/usr/bin/env python
-# This avoids hardcoding of an interpreter.
+#    .. cmake_param:: SCRIPT
+#       :multi:
+#       :required:
 #
-# This macro also marks the script for global installation.
+#       The script(s) to install into the virtualenv.
 #
-# If your script only works with python2 or with python3, give the number to the
-# MAJOR_VERSION parameter. This will restrict the installation process to that
-# python version.
+#    .. cmake_param:: MAJOR_VERSION
+#       :single:
+#       :argname: version
 #
-# If your script requires any non-dune python packages, pass them via the
-# REQUIRES parameter. They will be installed into the virtualenv
-# using pip and will be installed on the system during "make install".
-# Dune python packages are already present in the virtualenv.
+#       Set to "2" or "3" if your python package only works with
+#       python2 or python3. This will restrict the installation process to that
+#       python version.
+#
+#    .. cmake_param:: REQUIRES
+#       :multi:
+#       :argname: requ
+#
+#       List any non-dune python packages, that your script requires.
+#       Those packages will be installed into the virtualenv and on
+#       the system during :code:`make install` using `pip`.
+#
+#    Installs a script into the virtualenv(s) created by dune-python.
+#    It is placed in the bin folder of the env. You should write
+#    your python scripts with a shebang such as:
+#
+#    :code:`#!/usr/bin/env python`
+#
+#    This avoids hardcoding of an interpreter.
+#
+#    This macro also marks the script for global installation.
 #
 
 function(dune_install_python_script)

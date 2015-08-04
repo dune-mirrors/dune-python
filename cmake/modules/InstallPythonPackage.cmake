@@ -1,22 +1,31 @@
-# This cmake module provides macros that allow to access and modify the virtual env
-# that is shared by all dune modules, that depend on dune-python.
+# This cmake module provides macros that install python packages into the virtualenv
+# that is shared by all dune modules that depend on dune-python.
 #
-# dune_install_python_package(PATH path
-#                            [MAJOR_VERSION version])
+# .. cmake_function:: dune_install_python_package
 #
-# Installs the python package located at path into the virtualenv used by dune-python
-# The package at the given location is expected to be a pip installable package.
-# Also marks the given python package for global installation during "make install".
-# By default, the python package will then be installed into the system-wide site-packages
-# location. If you do not want to install it there, or you do not have permission to,
-# you may optionally set the DUNE_PYTHON_INSTALL_USER parameter to a username. The
-# packages will then be installed in the home directory of that user.
-# This is done through pips --user option. Installation in arbitrary locations is not
-# supported to minimize PYTHONPATH issues.
+#    .. cmake_param:: PATH
+#       :required:
+#       :single:
 #
-# If your package only works with python2 or with python3, give the number to the
-# MAJOR_VERSION parameter. This will restrict the installation process to that
-# python version.
+#       Relative path to the given python package source code.
+#
+#    .. cmake_param:: MAJOR_VERSION
+#       :single:
+#
+#       Set to "2" or "3" if your python package only works with
+#       python2 or python3. This will restrict the installation process to that
+#       python version.
+#
+#    Installs the python package located at path into the virtualenv used by dune-python
+#    The package at the given location is expected to be a pip installable package.
+#    Also marks the given python package for global installation during :code:`make install`.
+#    By default, the python package will then be installed into the system-wide site-packages
+#    location. If you do not want to install it there, or you do not have permission to,
+#    you may optionally set the :code:`DUNE_PYTHON_INSTALL_USER` parameter to a username. The
+#    packages will then be installed in the home directory of that user.
+#    This is done through pips :code:`--user` option. Installation in arbitrary locations is not
+#    supported to minimize :code:`PYTHONPATH` issues.
+#
 
 include(CheckPythonPackage)
 

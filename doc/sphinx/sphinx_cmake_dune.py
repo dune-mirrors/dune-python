@@ -5,9 +5,7 @@ tailored for the Dune project.
 
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from pygments.lexers.make import CMakeLexer
-from sphinx.util.compat import make_admonition
-from docutils.statemachine import StringList
+from itertools import chain
 
 class CMakeParamNode(nodes.Element):
     pass    
@@ -42,13 +40,13 @@ class CMakeFunction(Directive):
                 
         # Build the content of the box
         sl = [self.arguments[0] + '(\n']
-        for rp in required_params:
-            if rp["multi"]:
-                sl.append(" "*(len(self.arguments[0])+2) + rp['name'] + ' ' + rp['argname'] + '1 [' + rp['argname'] + '2 ...]\n')
-            if rp["single"]:
-                sl.append(" "*(len(self.arguments[0])+2) + rp['name'] + ' ' + rp['argname'] + '\n')
-            if rp["option"]:
-                sl.append(" "*(len(self.arguments[0])+2) + rp['name'] + '\n')
+        for rp, paramnode in required_params.items():
+            if paramnode["multi"]:
+                sl.append(" "*(len(self.arguments[0])+2) + paramnode['name'] + ' ' + paramnode['argname'] + '1 [' + paramnode['argname'] + '2 ...]\n')
+            if paramnode["single"]:
+                sl.append(" "*(len(self.arguments[0])+2) + paramnode['name'] + ' ' + paramnode['argname'] + '\n')
+            if paramnode["option"]:
+                sl.append(" "*(len(self.arguments[0])+2) + paramnode['name'] + '\n')
 
         for op, paramnode in optional_params.items():
             if paramnode["multi"]:
@@ -63,7 +61,7 @@ class CMakeFunction(Directive):
         output_nodes.append(lb)
  
         dl = nodes.definition_list()
-        for param, paramnode in optional_params.items():
+        for param, paramnode in chain(required_params.items(), optional_params.items()):
             dli = nodes.definition_list_item()
             dl += dli
 
@@ -85,25 +83,28 @@ class CMakeParam(Directive):
     required_arguments = 1
     optional_arguments = 0
     final_argument_whitespace = False
-    option_spec = {'single': lambda s: True,
+    option_spec = {'argname' : lambda s: s,
                    'multi': lambda s: True,
                    'option': lambda s: True,
+                   'positional' : lambda s: True,
                    'required': lambda s: True,
-                   'argname' : lambda s: s}
+                   'single': lambda s: True
+                   }
     has_content = True
     
     def run(self):
         node = CMakeParamNode()
         # set defaults:
-        assert(self.arguments[0] == self.arguments[0].upper())
-
         node['name'] = self.arguments[0]
         node['single'] = self.options.get('single', False)
         node['multi'] = self.options.get('multi', False)
         node['option'] = self.options.get('option', False)
+        node['positional'] = self.options.get('positional', False)
         node['required'] = self.options.get('required', False)
         node['argname'] = self.options.get('argname', self.arguments[0].lower() if self.arguments[0].lower()[-1:] != 's' else self.arguments[0].lower()[:-1])
         node['content'] = self.content
+        if node['positional']:
+            node['argname'] = ''
         return [node]
 
 def setup(app):

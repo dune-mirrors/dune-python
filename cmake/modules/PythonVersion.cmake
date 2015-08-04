@@ -1,11 +1,18 @@
 # This module provides macros related to different versions of the python interpreter.
 #
-# dune_require_python_version(version)
+# .. cmake_function:: dune_require_python_version
+#
+#    .. cmake_param:: version
+#       :positional:
+#       :single:
+#       :required:
+#
+#       The minimum required version.
 # 
-# Error out, if the python interpreter found by cmake is older than the given version.
-# Python2 and Pyhton3 versions are not compared to each other, so you can call this
-# macro multiple times to enforce minimal versions on a python2 and python3 interpreter
-# independently.
+#    Error out, if the python interpreter found by cmake is older than the given version.
+#    Python2 and Pyhton3 versions are not compared to each other, so you can call this
+#    macro multiple times to enforce minimal versions on a python2 and python3 interpreter
+#    independently.
 #
 
 macro(dune_require_python_version version)

@@ -1,10 +1,11 @@
 # Find the Python3 interpreter.
 #
-# NB: Generally, FindPythonInterp.cmake is able to find a python3
-# interpreter by working with version numbers. This find module
+# NB: Generally, :code:`FindPythonInterp.cmake` as shipped by cmake
+# is able to find a python3 interpreter by working with version numbers. This find module
 # does some gymnastics to be able to find BOTH python2 and python3
 # interpreters within the same project, which does not seem possible
 # with the modules provided from upstream.
+#
 #
 # When using this to look for Python3, you should use
 # FindPython2Interp.cmake to look for the Python2 interpreter.
