@@ -21,10 +21,20 @@
 #    Also marks the given python package for global installation during :code:`make install`.
 #    By default, the python package will then be installed into the system-wide site-packages
 #    location. If you do not want to install it there, or you do not have permission to,
-#    you may optionally set the :code:`DUNE_PYTHON_INSTALL_USER` parameter to a username. The
+#    you may optionally set :ref:`DUNE_PYTHON_INSTALL_USER` to a username. The
 #    packages will then be installed in the home directory of that user.
 #    This is done through pips :code:`--user` option. Installation in arbitrary locations is not
 #    supported to minimize :code:`PYTHONPATH` issues.
+#
+# .. cmake_variable:: DUNE_PYTHON_INSTALL_USER
+#
+#    dune-python only supports two ways of globally installing python packages during
+#    :code:`make install`:
+#
+#    * Into standard system paths (default)
+#    * Into the standard python path of a users home directory (through :code:`pip --user`)
+#
+#    Set this variable to a username to use the latter.
 #
 
 include(CheckPythonPackage)

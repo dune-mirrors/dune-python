@@ -30,8 +30,9 @@ Variable reference
 ==================
 .. toctree::
    :maxdepth: 1
+   :glob:
 
-   variables
+   variables/*
 
 Release Notes
 =============

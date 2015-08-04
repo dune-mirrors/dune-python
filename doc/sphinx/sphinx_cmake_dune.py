@@ -91,7 +91,7 @@ class CMakeParam(Directive):
                    'single': lambda s: True
                    }
     has_content = True
-    
+
     def run(self):
         node = CMakeParamNode()
         # set defaults:
@@ -107,9 +107,31 @@ class CMakeParam(Directive):
             node['argname'] = ''
         return [node]
 
+
+class CMakeVariable(Directive):
+    # We do require the name to be an argument
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = False
+    option_spec = {'argname' : lambda s: s,
+                   'multi': lambda s: True,
+                   'option': lambda s: True,
+                   'positional' : lambda s: True,
+                   'required': lambda s: True,
+                   'single': lambda s: True
+                   }
+    has_content = True
+
+    def run(self):
+        node = nodes.paragraph()
+        self.state.nested_parse(self.content, self.content_offset, node)
+        return [node]
+
+
 def setup(app):
     app.add_node(CMakeParamNode)
     app.add_directive('cmake_function', CMakeFunction)
     app.add_directive('cmake_param', CMakeParam)
+    app.add_directive('cmake_variable', CMakeVariable)
     
     return {'version': '0.1'}

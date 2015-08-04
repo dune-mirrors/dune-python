@@ -52,6 +52,18 @@ def read_module(args=get_args()):
                 o.write(cmd + "\n")
                 o.write("="*len(cmd) + "\n\n")
                 write_line(o, l)
+            elif l.startswith('# .. cmake_variable'):
+                o.close()
+                varpath = os.path.join(args['builddir'], 'variables')
+                if not os.path.exists(varpath):
+                    os.makedirs(varpath)
+                var = re.findall(r'# .. cmake_variable:: (.*)', l)[0]
+                varfile = os.path.join(varpath, var + ".rst")
+                o = open(varfile, 'w')
+                o.write(".. _" + var + ":\n\n")
+                o.write(var + "\n")
+                o.write("="*len(var) + "\n\n")
+                write_line(o, l)
             else:
                 write_line(o, l)
 
