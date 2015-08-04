@@ -2,7 +2,7 @@
 
 The following software is required to work with dune-python:
 
-* [dune-common](www.dune-project.org)
+* [dune-common](http://www.dune-project.org)
 * A python interpreter
 * [pip](https://pypi.python.org/pypi/pip)
 
