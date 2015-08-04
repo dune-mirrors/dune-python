@@ -30,23 +30,28 @@ def read_module(args=get_args()):
         os.makedirs(modpath)
     modfile = os.path.join(modpath, modname + '.rst')
     with open(args['module'], 'r') as i:
-        o = open(modfile, 'w')
+        mod = open(modfile, 'w')
         # Write the first block into the module rst file
-        o.write(".. _" + modname + ":\n\n")
-        o.write(modname + "\n")
-        o.write("="*len(modname) + "\n\n")
+        mod.write(".. _" + modname + ":\n\n")
+        mod.write(modname + "\n")
+        mod.write("="*len(modname) + "\n\n")
+
+        listHeader = False
+        o = mod
 
         for l in i:
             if not l.startswith('#'):
-                o.close()
                 return
             if l.startswith('# .. cmake_function'):
-                o.close()
                 cmdpath = os.path.join(args['builddir'], 'commands')
                 if not os.path.exists(cmdpath):
                     os.makedirs(cmdpath)
                 cmd = re.findall(r'# .. cmake_function:: (.*)', l)[0]
                 cmdfile = os.path.join(cmdpath, cmd + ".rst")
+                if not listHeader:
+                    mod.write("\nThis module defines the following functions or macros:\n\n")
+                    listHeader = True
+                mod.write("* :ref:`{}`\n".format(cmd))
                 o = open(cmdfile, 'w')
                 o.write(".. _" + cmd + ":\n\n")
                 o.write(cmd + "\n")
