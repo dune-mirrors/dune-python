@@ -6,19 +6,25 @@
 # interpreters within the same project, which does not seem possible
 # with the modules provided from upstream.
 #
-#
-# When using this to look for Python3, you should use
-# FindPython2Interp.cmake to look for the Python2 interpreter.
-#
 # This module sets the following variables:
 #
-#  PYTHON3INTERP_FOUND         - Was the Python executable found
-#  PYTHON3_EXECUTABLE          - path to the Python interpreter
+# :code:`PYTHON3INTERP_FOUND`
+#    Was the Python executable found
 #
-#  PYTHON3_VERSION_STRING      - Python version found e.g. 2.5.2
-#  PYTHON3_VERSION_MAJOR       - Python major version found e.g. 2
-#  PYTHON3_VERSION_MINOR       - Python minor version found e.g. 5
-#  PYTHON3_VERSION_PATCH       - Python patch version found e.g. 2
+# :code:`PYTHON3_EXECUTABLE`
+#    path to the Python interpreter
+# 
+# :code:`PYTHON3_VERSION_STRING`
+#    Python version found e.g. 3.4.0
+#
+# :code:`PYTHON3_VERSION_MAJOR`
+#    Python major version found e.g. 3
+#
+# :code:`PYTHON3_VERSION_MINOR`
+#    Python minor version found e.g. 4
+#
+# :code:`PYTHON3_VERSION_PATCH`
+#    Python patch version found e.g. 0
 #
 
 # Nuke the cache, somebody might have looked for Python 2...
