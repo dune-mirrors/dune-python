@@ -1,7 +1,6 @@
 .. title:: The dune-python module reference
 
-v2.4
+v0.1
 ====
 
-* Bla changed!
-* Blub changed!
+The initial release.
