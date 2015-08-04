@@ -110,7 +110,8 @@ function(dune_cmake_sphinx_doc)
   foreach(rst ${rstfiles})
     get_filename_component(rstname ${rst} NAME)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${rstname}
-                       COMMAND ${CMAKE_COMMAND} -E copy ${rst} ${CMAKE_CURRENT_BINARY_DIR})
+                       COMMAND ${CMAKE_COMMAND} -E copy ${rst} ${CMAKE_CURRENT_BINARY_DIR}
+                       DEPENDS ${rst})
     set(DOC_DEPENDENCIES ${DOC_DEPENDENCIES} ${CMAKE_CURRENT_BINARY_DIR}/${rstname})
   endforeach()
 
