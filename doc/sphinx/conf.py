@@ -1,5 +1,5 @@
 import sys
 
-sys.path.append('/home/dominic/dune/dune-python/doc/sphinx')
+sys.path.append('@DUNE_SPHINX_EXT_PATH@')
 
 extensions = ['sphinx_cmake_dune']

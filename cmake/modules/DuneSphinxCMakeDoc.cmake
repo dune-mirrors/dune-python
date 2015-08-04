@@ -3,11 +3,10 @@
 # There are some assumptions on how the documentation in
 # the CMake modules is written:
 #
-# * There are blocks that are written in restructured text.
-#   The first two characters of each line :code:`# ` are ignored
-#   Any resulting content of lines most form valid rst.
-# * One such block is at the beginning of every module and
-#   describes the general handling of the module
+# * At the beginning of each CMake module there is a comment block that is written in restructured text.
+#   The first two characters of each line (the comment character
+#   and a blank) are ignored. Any resulting content of lines most form valid rst.
+# * TODO document more
 #
 # .. cmake_function:: dune_cmake_sphinx_doc
 #
@@ -77,9 +76,11 @@ function(dune_cmake_sphinx_doc)
 
   # Determine the location of the config file template.
   if(CMAKE_PROJECT_NAME STREQUAL dune-python)
-    set(DUNE_SPHINX_PATH ${CMAKE_SOURCE_DIR}/doc/sphinx)
+    set(DUNE_SPHINX_CONF_PATH ${CMAKE_CURRENT_BINARY_DIR})
+    set(DUNE_SPHINX_EXT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
   else()
-    # TODO: How do we find the correct thing here?
+    set(DUNE_SPHINX_CONF_PATH ${dune-python_DIR}/doc/sphinx)
   endif()
 
   # Generate the list of modules by looking through the given paths
@@ -115,12 +116,6 @@ function(dune_cmake_sphinx_doc)
     set(DOC_DEPENDENCIES ${DOC_DEPENDENCIES} ${CMAKE_CURRENT_BINARY_DIR}/${rstname})
   endforeach()
 
-  # Configure the conf.py from the template
-  # TODO: For now, this is copyonly
-  configure_file(${DUNE_SPHINX_PATH}/conf.py ${CMAKE_CURRENT_BINARY_DIR}/conf.py COPYONLY)
-
-  # We
-
   # Call Sphinx once for each requested build type
   foreach(type ${SPHINX_CMAKE_BUILDTYPE})
     # Call the sphinx executable
@@ -128,7 +123,7 @@ function(dune_cmake_sphinx_doc)
                       COMMAND ${SPHINX_EXECUTABLE}
                                 -b ${type}
                                 -w ${CMAKE_BINARY_DIR}/SphinxError.log
-                                -c ${CMAKE_CURRENT_BINARY_DIR}
+                                -c ${DUNE_SPHINX_CONF_PATH}
                                 ${CMAKE_CURRENT_BINARY_DIR}
                                 ${CMAKE_CURRENT_BINARY_DIR}/${type}
                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

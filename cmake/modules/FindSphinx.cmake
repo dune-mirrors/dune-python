@@ -19,7 +19,7 @@
 # .. cmake_variable:: SPHINX_ROOT
 #
 #   You may set this variable to have :ref:`FindSphinx` look
-#   for the :ref:`sphinx-build` executable in the given path
+#   for the :code:`sphinx-build` executable in the given path
 #   before inspecting system paths.
 #
 
