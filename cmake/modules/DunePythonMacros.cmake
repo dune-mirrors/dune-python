@@ -45,12 +45,12 @@ if(PYTHON2INTERP_FOUND)
                             NAME dune-env-2)
   create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
                             NAME dune-env)
-  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
-                            COMMANDS python
-                            NAME python2)
-  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
-                            COMMANDS python
-                            NAME python)
+#  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
+#                            COMMANDS python
+#                            NAME python2)
+#  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
+#                            COMMANDS python
+#                            NAME python)
 endif()
 
 # The python3 virtualenv
@@ -64,11 +64,11 @@ if(PYTHON3INTERP_FOUND)
   # overwriting the 'dune-env' script from above defines the default to python3
   create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
                             NAME dune-env)
-  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
-                            COMMANDS python
-                            NAME python2)
-  # overwriting the 'python' script from above defines the default to python3
-  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
-                            COMMANDS python
-                            NAME python)
+#  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
+#                            COMMANDS python
+#                            NAME python2)
+#  # overwriting the 'python' script from above defines the default to python3
+#  create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
+#                            COMMANDS python
+#                            NAME python)
 endif()
