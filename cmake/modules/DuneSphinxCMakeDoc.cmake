@@ -57,7 +57,7 @@ function(dune_cmake_sphinx_doc)
   # Parse Arguments
   set(OPTION NO_DEFAULT_PATHS)
   set(SINGLE)
-  set(MULTI PATHS EXCLUDE)
+  set(MULTI PATHS EXCLUDE BUILDTYPE)
   include(CMakeParseArguments)
   cmake_parse_arguments(SPHINX_CMAKE "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
   if(PYINST_UNPARSED_ARGUMENTS)
