@@ -58,7 +58,7 @@ function(dune_cmake_sphinx_doc)
   set(MULTI PATHS EXCLUDE BUILDTYPE)
   include(CMakeParseArguments)
   cmake_parse_arguments(SPHINX_CMAKE "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
-  if(PYINST_UNPARSED_ARGUMENTS)
+  if(SPHINX_CMAKE_UNPARSED_ARGUMENTS)
     message(WARNING "Unparsed arguments in dune_cmake_sphinx_doc: This often indicates typos!")
   endif()
 
