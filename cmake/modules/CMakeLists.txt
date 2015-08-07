@@ -8,6 +8,7 @@ install(FILES CheckPythonPackage.cmake
               InstallPythonPackage.cmake
               InstallPythonScript.cmake
               PythonVersion.cmake
+              sphinx_cmake_dune.py
               VirtualEnvWrapper.cmake
         DESTINATION ${DUNE_INSTALL_MODULEDIR})
 

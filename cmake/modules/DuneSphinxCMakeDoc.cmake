@@ -72,13 +72,30 @@ function(dune_cmake_sphinx_doc)
     set(SPHINX_CMAKE_PATHS ${SPHINX_CMAKE_PATHS} ${CMAKE_SOURCE_DIR}/cmake/modules)
   endif()
 
-  # Determine the location of the config file template.
+  # determine the location of the Sphinx extension to write cmake
+  # and the location of the config file (template). This depends
+  # on whether this is dune-python or some downstream module.
   if(CMAKE_PROJECT_NAME STREQUAL dune-python)
+    set(DUNE_SPHINX_EXT_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
     set(DUNE_SPHINX_CONF_PATH ${CMAKE_CURRENT_BINARY_DIR})
-    set(DUNE_SPHINX_EXT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
   else()
-    set(DUNE_SPHINX_CONF_PATH ${dune-python_DIR}/doc/sphinx)
+    set(DUNE_SPHINX_EXT_PATH ${dune-python_MODULE_PATH})
+    # We either have a conf.py in this folder or we reuse the one from dune-python
+    set(LOCAL_CONF "")
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/conf.py)
+      set(LOCAL_CONF ${CMAKE_CURRENT_SOURCE_DIR}/conf.py)
+    endif()
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in)
+      set(LOCAL_CONF ${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in)
+    endif()
+    # Now write the conf.py and set the path to it
+    if(LOCAL_CONF)
+      set(DUNE_SPHINX_CONF_PATH ${CMAKE_CURRENT_BINARY_DIR})
+      configure_file(${LOCAL_CONF} ${CMAKE_CURRENT_BINARY_DIR}/conf.py)
+    else()
+      set(DUNE_SPHINX_CONF_PATH ${dune-python_DIR}/doc/sphinx)
+    endif()
   endif()
 
   # Generate the list of modules by looking through the given paths
