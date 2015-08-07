@@ -45,6 +45,20 @@ When developing a dune module, you should do the following:
   upstream dependencies manually. Use the macro
   :ref:`dune_install_python_script` in that case.
 
+.. note::
+
+   Naming a package :code:`dune.foo` will require the package dune
+   to be a namespace package, otherwise you will run into this
+   pip issue: https://github.com/pypa/pip/issues/3.
+   To make it a namespace package, you need to add
+   ::
+      `namespace_packages = ['dune']`
+
+   to the arguments of the :code:`setup` function and add an :code:`__init__.py`
+   module containing the following line to the :code:`dune` subfolder:
+   ::
+      __import__('pkg_resources').declare_namespace(__name__)
+
 .. _virtualenv:
 
 The dune-python virtualenv concept
