@@ -21,6 +21,7 @@ dune_project()
 add_subdirectory(cmake/modules)
 add_subdirectory(doc)
 
+dune_install_python_script(SCRIPT doc/sphinx/extract_cmake_data.py)
 dune_install_python_package(PATH python)
 
 # finalize the dune project, e.g. generating config.h etc.

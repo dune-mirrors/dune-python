@@ -45,8 +45,6 @@
 #    directory that this function is called from)
 #
 
-dune_install_python_script(SCRIPT extract_cmake_data.py)
-
 function(dune_cmake_sphinx_doc)
   # Only proceed if Sphinx was found on the system
   if(NOT SPHINX_FOUND)
