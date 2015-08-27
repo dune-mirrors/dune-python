@@ -109,12 +109,12 @@ function(dune_install_python_package)
   foreach(version ${PYINST_MAJOR_VERSION})
     # install the package into the virtual env
     execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} ${VENV_INSTALL_COMMAND}
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
 
     # define a rule on how to install the package during make install
     if(PIP${version}_FOUND)
       install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
-                                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
+                                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
                    ")
     else()
       install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
