@@ -16,6 +16,18 @@
 #       python2 or python3. This will restrict the installation process to that
 #       python version.
 #
+#    .. cmake_param:: NO_PIP
+#       :option:
+#
+#       Instead of :code:`pip -e`, `python setup.py develop` will be used as
+#       the installation command.
+#
+#    .. cmake_param:: NO_EDIT
+#       :option:
+#
+#       Will drop :code:`pip`s :code:`-e` option (or switch :code:`develop` to :code:`install`).
+#       Only use this option if your package is incompatible with :code:`-e`.
+#
 #    Installs the python package located at path into the virtualenv used by dune-python
 #    The package at the given location is expected to be a pip installable package.
 #    Also marks the given python package for global installation during :code:`make install`.
@@ -41,7 +53,7 @@ include(CheckPythonPackage)
 
 function(dune_install_python_package)
   # Parse Arguments
-  set(OPTION)
+  set(OPTION NO_PIP NO_EDIT)
   set(SINGLE PATH MAJOR_VERSION)
   set(MULTI)
   include(CMakeParseArguments)
@@ -63,19 +75,45 @@ function(dune_install_python_package)
                        INTERPRETER ${PYTHON3_EXECUTABLE}
                        RESULT PIP3_FOUND)
 
+  # Construct the installation command strings from the given options
+  if(PYINST_NO_PIP)
+    if(PYINST_NO_EDIT)
+      set(INST_COMMAND install)
+    else()
+      set(INST_COMMAND develop)
+    endif()
+    set(VENV_INSTALL_COMMAND python setup.py ${INST_COMMAND})
+  else()
+    set(EDIT_OPTION)
+    if(NOT PYINST_NO_EDIT)
+      set(EDIT_OPTION -e)
+    endif()
+    set(VENV_INSTALL_COMMAND python -m pip install ${EDIT_OPTION} .)
+  endif()
+
+  # Construct the interpreter options for global installation
+  if(PYINST_NO_PIP)
+    set(SYSTEM_INSTALL_OPTIONS setup.py install)
+    if(DUNE_PYTHON_INSTALL_USER)
+      message("Error message: Incompatible options - NO_PIP and DUNE_PYTHON_INSTALL_USER")
+    endif()
+  else()
+    set(USER_STRING "")
+    if(DUNE_PYTHON_INSTALL_USER)
+      set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
+    endif()
+    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} .)
+  endif()
+
   # iterate over the given interpreters
   foreach(version ${PYINST_MAJOR_VERSION})
     # install the package into the virtual env
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} python -m pip install -e .
+    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} ${VENV_INSTALL_COMMAND}
                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
 
     # define a rule on how to install the package during make install
     if(PIP${version}_FOUND)
-      set(USER_STRING "")
-      if(DUNE_PYTHON_INSTALL_USER)
-        set(USER_STRING "--user ${DUNE_PYTHON_INSTALL_USER}")
-      endif()
-      install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -m pip install ${USER_STRING} .
+      install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
                                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${PYINST_PATH})
                    ")
     else()
