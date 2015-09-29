@@ -106,7 +106,7 @@ function(dune_cmake_sphinx_doc)
     set(SPHINX_DOC_MODULE_LIST ${SPHINX_DOC_MODULE_LIST} ${modules})
   endforeach()
 
-  # Initialize a variable that collect all dependencies of the documentation
+  # Initialize a variable that collects all dependencies of the documentation
   set(DOC_DEPENDENCIES)
 
   # Generate the rst files for all cmake modules

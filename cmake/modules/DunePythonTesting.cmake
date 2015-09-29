@@ -16,7 +16,7 @@
 #       The working directory of the command. Defaults to
 #       the current build directory.
 #
-#    .. cmake_param:: VIRUALENV
+#    .. cmake_param:: VIRTUALENV
 #       :single:
 #
 #       The virtualenv wrapper to use. Defaults to the
