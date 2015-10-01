@@ -68,7 +68,7 @@ function(create_virtualenv)
   if(CREATE_ENV_ONLY_ONCE)
     # First iterate over the list of dependencies and look for virtualenvs
     set(VIRTUALENV_PATH)
-    foreach(mod ${${CMAKE_PROJECT_NAME}_DEPENDS} ${${CMAKE_PROJECT_NAME}_SUGGESTS})
+    foreach(mod ${ALL_DEPENDENCIES})
       if(IS_DIRECTORY ${${mod}_DIR}/${CREATE_ENV_NAME})
         set(VIRTUALENV_PATH ${${mod}_DIR}/${CREATE_ENV_NAME})
       endif()
