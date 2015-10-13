@@ -42,6 +42,14 @@
 #       The python interpreter to be used within the virtualenv. Defaults to
 #       :code:`PYTHON2_EXECUTABLE` defined by :ref:`FindPython2Interp`.
 #
+# .. cmake_variable:: DISABLE_UBUNTU_WORKAROUND
+#
+#    dune-python features a workaround for a severe pip-related bug in Ubuntu 14.04 LTS.
+#    Check this one: https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847
+#    However, you might be running into trouble using this fallback on some other Ubuntu
+#    machines. Setting this variable to True will disable the workaround. Only use this
+#    when you have trouble building dune-python on an Ubuntu system.
+#
 
 include(CheckPythonPackage)
 
@@ -105,7 +113,7 @@ function(create_virtualenv)
     # Idea of the workaround: Install without pip and then easy_install pip into it.
     # As soon as the upstream bug is fixed, this entire if block should be deleted in favor
     # of the else block.
-    if(EXISTS /etc/dpkg/origins/ubuntu AND "${VIRTUALENV_PACKAGE_NAME}" STREQUAL "venv")
+    if(EXISTS /etc/dpkg/origins/ubuntu AND "${VIRTUALENV_PACKAGE_NAME}" STREQUAL "venv" AND NOT DISABLE_UBUNTU_WORKAROUND)
       message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
       message("Falling back to terrible things to workaround Ubuntu bugs...")
       check_python_package(PACKAGE easy_install
