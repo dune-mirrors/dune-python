@@ -1,4 +1,5 @@
 install(FILES CheckPythonPackage.cmake
+              CheckUbuntu.cmake
               CreateVirtualEnv.cmake
               DunePythonMacros.cmake
               DunePythonTesting.cmake
