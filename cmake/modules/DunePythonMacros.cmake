@@ -11,6 +11,9 @@
 #   for details
 #
 
+# do some checks on the given operating system
+include(CheckUbuntu)
+
 # include all macros that dune-python offers. They can be documented better if placed
 # in cmake modules grouped together by functionality
 include(CreateVirtualEnv)
