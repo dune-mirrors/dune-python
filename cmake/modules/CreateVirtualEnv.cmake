@@ -42,6 +42,15 @@
 #       The python interpreter to be used within the virtualenv. Defaults to
 #       :code:`PYTHON2_EXECUTABLE` defined by :ref:`FindPython2Interp`.
 #
+# .. cmake_variable:: ENABLE_UBUNTU_WORKAROUND
+#
+#    Ubuntu 14.04 has a serious python3 virtualenv related bug. Check
+#    https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847
+#    for any details. On Ubuntu 14.04, a workaround is implemented. If you
+#    run into similar problems on other debian-like systems, try setting
+#    this variable to see whether you are running into the same type of
+#    problems. Please report back to dominic.kempf@iwr.uni-heidelberg.de
+#    in that case!
 
 include(CheckPythonPackage)
 
@@ -105,7 +114,7 @@ function(create_virtualenv)
     # Idea of the workaround: Install without pip and then easy_install pip into it.
     # As soon as the upstream bug is fixed, this entire if block should be deleted in favor
     # of the else block.
-    if(EXISTS /etc/dpkg/origins/ubuntu AND "${VIRTUALENV_PACKAGE_NAME}" STREQUAL "venv")
+    if((UBUNTU_VERSION STREQUAL "14.04" OR ENABLE_UBUNTU_WORKAROUND) AND "${VIRTUALENV_PACKAGE_NAME}" STREQUAL "venv")
       message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
       message("Falling back to terrible things to workaround Ubuntu bugs...")
       check_python_package(PACKAGE easy_install
