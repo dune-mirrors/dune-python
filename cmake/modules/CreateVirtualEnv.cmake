@@ -107,7 +107,7 @@ function(create_virtualenv)
 
     # error out if none of the packages could be found.
     if(NOT VIRTUALENV_PACKAGE_NAME)
-      message(FATAL_ERROR "You do not need either the package virtualenv or venv installed on the host system")
+      message(FATAL_ERROR "You need either the package virtualenv or venv installed on the host system")
     endif()
 
     # Work around ubuntu bug https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847
