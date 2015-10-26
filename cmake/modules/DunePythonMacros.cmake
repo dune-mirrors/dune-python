@@ -30,9 +30,8 @@ find_package(Python2Interp)
 if(NOT PYTHON3INTERP_FOUND AND NOT PYTHON2INTERP_FOUND)
   message(FATAL_ERROR "Could not determine the location of your python interpreter")
 endif()
-
-# Look for additional software, such as Sphinx
-find_package(Sphinx)
+# To not mess around with upstream packages looking for python, run the original test once.
+find_package(PythonInterp)
 
 # Create a virtualenv to install all python packages from all dune
 # modules that provide packages in. We only ever want to create one
