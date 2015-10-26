@@ -1,4 +1,6 @@
-.. title:: dune-python CMake reference - An introduction
+===========
+dune-python
+===========
 
 .. _whatabout:
 
@@ -52,11 +54,13 @@ When developing a dune module, you should do the following:
    pip issue: https://github.com/pypa/pip/issues/3.
    To make it a namespace package, you need to add
    ::
-      `namespace_packages = ['dune']`
+
+      namespace_packages = ['dune']
 
    to the arguments of the :code:`setup` function and add an :code:`__init__.py`
    module containing the following line to the :code:`dune` subfolder:
    ::
+
       __import__('pkg_resources').declare_namespace(__name__)
 
 .. _virtualenv:
