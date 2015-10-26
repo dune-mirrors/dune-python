@@ -3,14 +3,11 @@ install(FILES CheckPythonPackage.cmake
               CreateVirtualEnv.cmake
               DunePythonMacros.cmake
               DunePythonTesting.cmake
-              DuneSphinxCMakeDoc.cmake
               FindPython2Interp.cmake
               FindPython3Interp.cmake
-              FindSphinx.cmake
               InstallPythonPackage.cmake
               InstallPythonScript.cmake
               PythonVersion.cmake
-              sphinx_cmake_dune.py
               VirtualEnvWrapper.cmake
         DESTINATION ${DUNE_INSTALL_MODULEDIR})
 

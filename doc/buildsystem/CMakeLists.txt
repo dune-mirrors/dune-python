@@ -1,0 +1,1 @@
+install(FILES dune-python.rst DESTINATION ${CMAKE_INSTALL_DOCDIR})
