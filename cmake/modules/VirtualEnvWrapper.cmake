@@ -31,7 +31,12 @@
 #       The name of the wrapper script. Defaults to the name of
 #       the virtualenv.
 #
-
+#    .. note::
+#
+#       This is used internally by dune-python to create wrapper scripts
+#       in build directories of dependent modules. You may still use it
+#       yourself, but you rarely have to.
+#
 
 # Determine the directory, that the dune-python cmake macros are located
 # This actually depends on this module being dune-python itself, or some other

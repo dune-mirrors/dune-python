@@ -1,6 +1,5 @@
 # Macro to install a single executable python script into
-# the dune-python virtualenv. For details on the virtualenv
-# concept see :ref:`virtualenv`.
+# the dune-python virtualenv.
 #
 # .. cmake_function:: dune_install_python_script
 #
@@ -35,6 +34,7 @@
 #    This avoids hardcoding of an interpreter.
 #
 #    This macro also marks the script for global installation.
+#    For details on the dune-python virtualenv concept see :ref:`virtualenv`.
 #
 
 function(dune_install_python_script)

@@ -1,5 +1,4 @@
-# This modules functions allow to add commands to run
-# when a target :code:`pytest` is built.
+# Support for python testing frameworks.
 #
 # .. cmake_function:: add_python_test_command
 #
@@ -21,6 +20,10 @@
 #
 #       The virtualenv wrapper to use. Defaults to the
 #       standard dune one.
+#
+#    Integrates a python testing framework command into the Dune
+#    build system. Added commands are run, when the target
+#    :code:`pytest` is built.
 #
 
 add_custom_target(pytest)

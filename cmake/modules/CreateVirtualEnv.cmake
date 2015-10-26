@@ -1,12 +1,10 @@
 # This module provides the code that creates the Dune virtualenvs.
-# See :ref:`virtualenv` for details on what
-# the Dune virtualenvs are used for.
-#
-# As a normal user, you should not need to use this macro directly.
-# You may still do so if you need to create custom virtualenvs at
-# configure time.
 #
 # .. cmake_function:: create_virtualenv
+#
+#    .. cmake_brief::
+#
+#       Create a new virtualenv!
 #
 #    .. cmake_param:: NAME
 #       :single:
@@ -41,6 +39,16 @@
 #
 #       The python interpreter to be used within the virtualenv. Defaults to
 #       :code:`PYTHON2_EXECUTABLE` defined by :ref:`FindPython2Interp`.
+#
+#    See :ref:`virtualenv` for details on what the Dune virtualenvs are used for.
+#
+#    .. note::
+#
+#       This function is used by dune-python to create the default virtualenvs,
+#       that any downstream module will also use.
+#       As a normal user, you should not need to use this macro directly.
+#       You may still do so if you need to create custom virtualenvs at
+#       configure time.
 #
 # .. cmake_variable:: ENABLE_UBUNTU_WORKAROUND
 #

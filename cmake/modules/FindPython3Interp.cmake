@@ -1,30 +1,34 @@
-# Find the Python3 interpreter.
+# .. cmake_module::
 #
-# NB: Generally, :code:`FindPythonInterp.cmake` as shipped by cmake
-# is able to find a python3 interpreter by working with version numbers. This find module
-# does some gymnastics to be able to find BOTH python2 and python3
-# interpreters within the same project, which does not seem possible
-# with the modules provided from upstream.
+#    Find the Python3 interpreter.
 #
-# This module sets the following variables:
+#    .. note::
 #
-# :code:`PYTHON3INTERP_FOUND`
-#    Was the Python executable found
+#       Generally, :code:`FindPythonInterp.cmake` as shipped by cmake
+#       is able to find a python3 interpreter by working with version numbers. This find module
+#       does some gymnastics to be able to find BOTH python2 and python3
+#       interpreters within the same project, which does not seem possible
+#       with the modules provided from upstream.
 #
-# :code:`PYTHON3_EXECUTABLE`
-#    path to the Python interpreter
+#    This module sets the following variables:
+#
+#    :code:`PYTHON3INTERP_FOUND`
+#       Was the Python executable found
+#
+#    :code:`PYTHON3_EXECUTABLE`
+#       path to the Python interpreter
 # 
-# :code:`PYTHON3_VERSION_STRING`
-#    Python version found e.g. 3.4.0
+#    :code:`PYTHON3_VERSION_STRING`
+#       Python version found e.g. 3.4.0
 #
-# :code:`PYTHON3_VERSION_MAJOR`
-#    Python major version found e.g. 3
+#    :code:`PYTHON3_VERSION_MAJOR`
+#       Python major version found e.g. 3
 #
-# :code:`PYTHON3_VERSION_MINOR`
-#    Python minor version found e.g. 4
+#    :code:`PYTHON3_VERSION_MINOR`
+#       Python minor version found e.g. 4
 #
-# :code:`PYTHON3_VERSION_PATCH`
-#    Python patch version found e.g. 0
+#    :code:`PYTHON3_VERSION_PATCH`
+#       Python patch version found e.g. 0
 #
 
 # Nuke the cache, somebody might have looked for Python 2...
