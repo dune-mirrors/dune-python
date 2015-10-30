@@ -32,9 +32,8 @@ In particular, dune-python offers:
 
 # Documentation
 
-Type `make doc` in the build directory of dune-python to generate
-the html documentation of dune-python. It is placed in the subfolder
-`doc/sphinx/html`.
+Build the cmake documentation in any module requiring or suggesting
+`dune-python` to learn more about `dune-python`.
 
 # Getting help
 
