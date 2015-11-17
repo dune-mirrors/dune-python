@@ -56,6 +56,7 @@ function(add_python_test_command)
   set(commandstr "")
   foreach(comm ${PYTEST_COMMAND})
     set(commandstr "${commandstr}_${comm}")
+    string(REPLACE "/" "_" commandstr ${commandstr})
   endforeach()
 
   # extract the raw envwrapper name for the naming scheme of the test target
