@@ -23,5 +23,7 @@ add_subdirectory(doc/buildsystem)
 
 dune_install_python_package(PATH python)
 
+add_python_test_command(COMMAND py.test ${CMAKE_SOURCE_DIR}/python)
+
 # finalize the dune project, e.g. generating config.h etc.
 finalize_dune_project(GENERATE_CONFIG_H_CMAKE)
