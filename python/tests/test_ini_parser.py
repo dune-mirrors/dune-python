@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from dune.common.ini.parser import parse_ini_file
+from dune.common.parametertree.parser import parse_ini_file
 
 
 def test_parser(dir):

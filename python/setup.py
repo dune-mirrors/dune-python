@@ -8,4 +8,4 @@ setup(name='dune.common',
       author='Dominic Kempf',
       author_email='dominic.kempf@iwr.uni-heidelberg.de',
       license='BSD',
-      packages=['dune.common', 'dune.common.ini'])
+      packages=find_packages())
