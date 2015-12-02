@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 from pyparsing import *
-from dune.common.ini.dotdict import DotDict
+from dune.common.parametertree.dotdict import DotDict
 
 
 class DuneIniParser(object):
