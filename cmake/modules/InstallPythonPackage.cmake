@@ -120,4 +120,6 @@ function(dune_install_python_package)
       install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
     endif()
   endforeach()
+
+  set(DUNE_PYTHON_SOURCE_PATHS "${DUNE_PYTHON_SOURCE_PATHS}\nsys.path.append('${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}')" PARENT_SCOPE)
 endfunction()
