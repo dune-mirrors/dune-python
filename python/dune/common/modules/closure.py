@@ -44,8 +44,9 @@ def get_dune_module_closure(module, repocache={}):
     # with full closure are added to the repocache to speed up things.
     depends_closure = []
     for mod in module.depends:
-        mod_closure = repocache.setdefault(mod, get_dune_module_closure(get_dune_module_file(mod), repocache=repocache))
-        depends_closure.extend(mod_closure.depends)
+        if mod not in repocache:
+            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod), repocache=repocache)
+        depends_closure.extend(repocache[mod].depends)
 
     # Then, update the dependencies list of the current module.
     module.depends = list(set([i for i in chain(module.depends, depends_closure)]))
@@ -53,11 +54,13 @@ def get_dune_module_closure(module, repocache={}):
     # Do the same for suggestions
     suggestions_closure = []
     for mod in module.suggests:
-        mod_closure = repocache.setdefault(mod, get_dune_module_closure(get_dune_module_file(mod), repocache=repocache))
+        if mod not in repocache:
+            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod), repocache=repocache)
+
         # Here, we also consider requirements of suggestions, which might turn into
         # suggestions of downstream modules!
-        suggestions_closure.extend(mod_closure.depends)
-        suggestions_closure.extend(mod_closure.suggests)
+        suggestions_closure.extend(repocache[mod].depends)
+        suggestions_closure.extend(repocache[mod].suggests)
 
     # Update the list of suggestions, only list real suggestions!
     module.suggests = [l for l in list(set([i for i in chain(module.suggests, suggestions_closure)])) if l not in module.depends]
