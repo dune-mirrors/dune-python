@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(name='dune.common',
       namespace_packages=['dune'],
@@ -8,4 +8,6 @@ setup(name='dune.common',
       author='Dominic Kempf',
       author_email='dominic.kempf@iwr.uni-heidelberg.de',
       license='BSD',
-      packages=find_packages())
+      packages=['dune.common',
+                'dune.common.parametertree',
+                ])
