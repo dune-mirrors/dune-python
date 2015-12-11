@@ -142,12 +142,20 @@ function(create_virtualenv)
       set(DUNE_VIRTUALENV_PATH ${VIRTUALENV_PATH})
       configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/easy_install-env.sh)
       # Now install pip into the virtualenv through easy_install
-      execute_process(COMMAND ${CMAKE_BINARY_DIR}/easy_install-env.sh python -m easy_install pip)
+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/easy_install-env.sh python -m easy_install pip
+                      RESULT_VARIABLE retcode)
+      if(NOT "${retcode}" STREQUAL "0")
+        message(FATAL_ERROR "Fatal error when installing pip into the env.")
+      endif()
       file(REMOVE ${CMAKE_BINARY_DIR}/easy_install-env.sh)
     else()
       # build the actual thing
       message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
-      execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+      execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
+                      RESULT_VARIABLE retcode)
+      if(NOT "${retcode}" STREQUAL "0")
+        message(FATAL_ERROR "Fatal error when creating the virtualenv")
+      endif()
       set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
     endif()
   endif()

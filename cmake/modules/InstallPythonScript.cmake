@@ -64,7 +64,11 @@ function(dune_install_python_script)
   foreach(version ${PYINST_MAJOR_VERSION})
     # Install the requirements into the virtualenv
     foreach(requ ${PYINST_REQUIRES})
-      execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} pip install ${requ})
+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} pip install ${requ}
+                      RESULT_VARIABLE retcode)
+      if(NOT "${retcode}" STREQUAL "0")
+        message(FATAL_ERROR "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}")
+      endif()
     endforeach()
 
     # Install into the virtualenv(s)
@@ -73,7 +77,11 @@ function(dune_install_python_script)
       # VIRTUAL_ENV actually inside the virtualenv, not in the scope of the outer cmake run.
       file(WRITE ${CMAKE_BINARY_DIR}/cp.cmake "file(COPY ${file} DESTINATION \$ENV{VIRTUAL_ENV}/bin)")
       execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp.cmake
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                      RESULT_VARIABLE retcode)
+      if(NOT "${retcode}" STREQUAL "0")
+        message(FATAL_ERROR "Fatal error when installing the script ${PYINST_SCRIPT}")
+      endif()
       # remove the auxiliary script
       file(REMOVE ${CMAKE_BINARY_DIR}/cp.cmake)
     endforeach()
@@ -84,7 +92,14 @@ function(dune_install_python_script)
       if(DUNE_PYTHON_INSTALL_USER)
         set(USER_STRING "--user ${DUNE_PYTHON_INSTALL_USER}")
       endif()
-      install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -m pip install ${USER_STRING} ${requ})")
+      foreach(requ ${PYINST_REQUIRES})
+        install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
+                                      RESULT_VARIABLE retcode)
+                      if(NOT \"${retcode}\" STREQUAL \"0\")
+                        message(FATAL_ERROR \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")
+                      endif()"
+                )
+      endforeach()
     else()
       install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install requirements of script ${PYINST_SCRIPT}\")")
     endif()
