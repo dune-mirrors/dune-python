@@ -120,4 +120,13 @@ function(dune_install_python_package)
       install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
     endif()
   endforeach()
+
+  # Use a custom section to export python path to downstream modules
+  set(DUNE_CUSTOM_PKG_CONFIG_SECTION "${DUNE_CUSTOM_PKG_CONFIG_SECTION}
+  set(DUNE_PYTHON_SOURCE_PATHS \"${DUNE_PYTHON_SOURCE_PATHS}:${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}\")
+  " PARENT_SCOPE)
+
+  # and add python path for this module
+  set(DUNE_PYTHON_SOURCE_PATHS "${DUNE_PYTHON_SOURCE_PATHS}:${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}" PARENT_SCOPE)
+
 endfunction()
