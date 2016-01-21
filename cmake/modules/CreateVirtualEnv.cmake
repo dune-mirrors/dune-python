@@ -50,15 +50,6 @@
 #       You may still do so if you need to create custom virtualenvs at
 #       configure time.
 #
-# .. cmake_variable:: ENABLE_UBUNTU_WORKAROUND
-#
-#    Ubuntu 14.04 has a serious python3 virtualenv related bug. Check
-#    https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847
-#    for any details. On Ubuntu 14.04, a workaround is implemented. If you
-#    run into similar problems on other debian-like systems, try setting
-#    this variable to see whether you are running into the same type of
-#    problems. Please report back to dominic.kempf@iwr.uni-heidelberg.de
-#    in that case!
 
 include(CheckPythonPackage)
 
@@ -105,12 +96,14 @@ function(create_virtualenv)
                          RESULT VIRTUALENV_FOUND)
     if(VIRTUALENV_FOUND)
       set(VIRTUALENV_PACKAGE_NAME virtualenv)
+      set(NOPIP_OPTION --no-pip)
     endif()
     check_python_package(PACKAGE venv
                          INTERPRETER ${CREATE_ENV_INTERPRETER}
                          RESULT VENV_FOUND)
     if(VENV_FOUND)
       set(VIRTUALENV_PACKAGE_NAME venv)
+      set(NOPIP_OPTION --without-pip)
     endif()
 
     # error out if none of the packages could be found.
@@ -118,46 +111,44 @@ function(create_virtualenv)
       message(FATAL_ERROR "You need either the package virtualenv or venv installed on the host system")
     endif()
 
-    # Work around ubuntu bug https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847
-    # Idea of the workaround: Install without pip and then easy_install pip into it.
-    # As soon as the upstream bug is fixed, this entire if block should be deleted in favor
-    # of the else block.
-    if((UBUNTU_VERSION STREQUAL "14.04" OR ENABLE_UBUNTU_WORKAROUND) AND "${VIRTUALENV_PACKAGE_NAME}" STREQUAL "venv")
-      message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
-      message("Falling back to terrible things to workaround Ubuntu bugs...")
-      check_python_package(PACKAGE easy_install
-                           INTERPRETER ${CREATE_ENV_INTERPRETER}
-                           RESULT EASY_INSTALL_FOUND
-                           REQUIRED)
-      # First install with --without-pip
-      execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME}
-                        --system-site-packages --without-pip ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
-      set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
-      # Get a shell wrapper around the created virtualenv
-      if(CMAKE_PROJECT_NAME STREQUAL dune-python)
-        set(DUNE_PYTHON_TEMPLATES_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-      else()
-        set(DUNE_PYTHON_TEMPLATES_PATH ${dune-python_MODULE_PATH})
-      endif()
-      set(DUNE_VIRTUALENV_PATH ${VIRTUALENV_PATH})
-      configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/easy_install-env.sh)
-      # Now install pip into the virtualenv through easy_install
-      execute_process(COMMAND ${CMAKE_BINARY_DIR}/easy_install-env.sh python -m easy_install pip
-                      RESULT_VARIABLE retcode)
-      if(NOT "${retcode}" STREQUAL "0")
-        message(FATAL_ERROR "Fatal error when installing pip into the env.")
-      endif()
-      file(REMOVE ${CMAKE_BINARY_DIR}/easy_install-env.sh)
-    else()
-      # build the actual thing
-      message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
-      execute_process(COMMAND ${CREATE_ENV_INTERPRETER} -m ${VIRTUALENV_PACKAGE_NAME} --system-site-packages ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
-                      RESULT_VARIABLE retcode)
-      if(NOT "${retcode}" STREQUAL "0")
-        message(FATAL_ERROR "Fatal error when creating the virtualenv")
-      endif()
-      set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+    # Do the actual thing and build the virtualenv. As many debianish systems have some
+    # some severe bugs concerning pip and virtualenvs (see here for details:
+    # https://bugs.launchpad.net/debian/+source/python3.4/+bug/1290847 )
+    # we install pip via the get-pip script from https://bootstrap.pypa.io/get-pip.py
+    # instead of having virtualenv install it into the env.
+    message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
+
+    # First, we create a virtualenv without pip
+    execute_process(COMMAND ${CREATE_ENV_INTERPRETER}
+                            -m ${VIRTUALENV_PACKAGE_NAME}
+                            --system-site-packages
+                            ${NOPIP_OPTION}
+                            ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
+                    RESULT_VARIABLE retcode)
+    if(NOT "${retcode}" STREQUAL "0")
+      message(FATAL_ERROR "Fatal error when setting up the env.")
     endif()
+    set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
+
+    # Now download the get-pip script
+    file(DOWNLOAD https://bootstrap.pypa.io/get-pip.py ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py)
+
+    # Get a shell wrapper around the created virtualenv
+    if(CMAKE_PROJECT_NAME STREQUAL dune-python)
+      set(DUNE_PYTHON_TEMPLATES_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+    else()
+      set(DUNE_PYTHON_TEMPLATES_PATH ${dune-python_MODULE_PATH})
+    endif()
+    set(DUNE_VIRTUALENV_PATH ${VIRTUALENV_PATH})
+    configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/get-pip-env.sh)
+
+    # Now install pip into the virtualenv and remove the helper
+    execute_process(COMMAND ${CMAKE_BINARY_DIR}/get-pip-env.sh python ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py
+                    RESULT_VARIABLE retcode)
+    if(NOT "${retcode}" STREQUAL "0")
+      message(FATAL_ERROR "Fatal error when setting up the env.")
+    endif()
+    file(REMOVE ${CMAKE_BINARY_DIR}/get-pip-env.sh)
   endif()
 
   # Set the path to the virtualenv in the outer scope
