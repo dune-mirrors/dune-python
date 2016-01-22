@@ -64,7 +64,7 @@ function(dune_install_python_script)
   foreach(version ${PYINST_MAJOR_VERSION})
     # Install the requirements into the virtualenv
     foreach(requ ${PYINST_REQUIRES})
-      execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} pip install ${requ}
+      execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} pip install --ignore-installed ${requ}
                       RESULT_VARIABLE retcode)
       if(NOT "${retcode}" STREQUAL "0")
         message(FATAL_ERROR "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}")
@@ -93,7 +93,8 @@ function(dune_install_python_script)
         set(USER_STRING "--user ${DUNE_PYTHON_INSTALL_USER}")
       endif()
       foreach(requ ${PYINST_REQUIRES})
-        install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
+        install(CODE "message(\"dune-python runs this install command: ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}\")
+                      execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
                                       RESULT_VARIABLE retcode)
                       if(NOT \"${retcode}\" STREQUAL \"0\")
                         message(FATAL_ERROR \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")

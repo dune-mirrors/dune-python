@@ -93,7 +93,7 @@ function(dune_install_python_package)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND python -m pip install ${ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
+    set(VENV_INSTALL_COMMAND python -m pip install --ignore-installed ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
   endif()
 
   # Construct the interpreter options for global installation
@@ -107,7 +107,7 @@ function(dune_install_python_package)
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
     endif()
-    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${ADDITIONAL_PIP_PARAMS} .)
+    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} --ignore-installed ${PYINST_ADDITIONAL_PIP_PARAMS} .)
   endif()
 
   # iterate over the given interpreters
@@ -121,11 +121,12 @@ function(dune_install_python_package)
     endif()
     # define a rule on how to install the package during make install
     if(PIP${version}_FOUND)
-      install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
+      install(CODE "message(\"dune-python runs this install command: ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}\")
+                    execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
                                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
                                     RESULT_VARIABLE retcode)
                     if(NOT \"${retcode}\" STREQUAL \"0\")
-                      message(FATAL_ERROR \"Fatal error when installing the script ${PYINST_SCRIPT}\")
+                      message(FATAL_ERROR \"Fatal error when installing the package at ${PYINST_PATH}\")
                     endif()"
              )
     else()
