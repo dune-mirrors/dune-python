@@ -28,6 +28,11 @@
 #       Will drop :code:`pip`s :code:`-e` option (or switch :code:`develop` to :code:`install`).
 #       Only use this option if your package is incompatible with :code:`-e`.
 #
+#    .. cmake_param:: ADDITIONAL_PIP_PARAMS
+#       :multi:
+#
+#       Parameters to add to any :code:`pip install` call (appended).
+#
 #    Installs the python package located at path into the virtualenv used by dune-python
 #    The package at the given location is expected to be a pip installable package.
 #    Also marks the given python package for global installation during :code:`make install`.
@@ -55,7 +60,7 @@ function(dune_install_python_package)
   # Parse Arguments
   set(OPTION NO_PIP NO_EDIT)
   set(SINGLE PATH MAJOR_VERSION)
-  set(MULTI)
+  set(MULTI ADDITIONAL_PIP_PARAMS)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYINST "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
   if(PYINST_UNPARSED_ARGUMENTS)
@@ -88,7 +93,7 @@ function(dune_install_python_package)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND python -m pip install ${EDIT_OPTION} .)
+    set(VENV_INSTALL_COMMAND python -m pip install ${ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
   endif()
 
   # Construct the interpreter options for global installation
@@ -102,7 +107,7 @@ function(dune_install_python_package)
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
     endif()
-    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} .)
+    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${ADDITIONAL_PIP_PARAMS} .)
   endif()
 
   # iterate over the given interpreters
