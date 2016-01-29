@@ -1,5 +1,4 @@
-# This modules functions allow to add commands to run
-# when a target :code:`pytest` is built.
+# Support for python testing frameworks.
 #
 # .. cmake_function:: add_python_test_command
 #
@@ -22,6 +21,16 @@
 #       The virtualenv wrapper to use. Defaults to the
 #       standard dune one.
 #
+#    .. cmake_param:: REQUIRED_PACKAGES
+#       :multi:
+#
+#       A list of python packages that are needed for this test command.
+#       They will be installed into the virtualenv.
+#
+#    Integrates a python testing framework command into the Dune
+#    build system. Added commands are run, when the target
+#    :code:`pytest` is built.
+#
 
 add_custom_target(pytest)
 
@@ -29,7 +38,7 @@ function(add_python_test_command)
   # Parse Arguments
   set(OPTION)
   set(SINGLE WORKING_DIRECTORY VIRTUALENV)
-  set(MULTI COMMAND)
+  set(MULTI COMMAND REQUIRED_PACKAGES)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYTEST "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
   if(PYTEST_UNPARSED_ARGUMENTS)
@@ -48,6 +57,8 @@ function(add_python_test_command)
   if(NOT IS_ABSOLUTE ${PYTEST_VIRTUALENV})
     set(PYTEST_VIRTUALENV ${CMAKE_BINARY_DIR}/${PYTEST_VIRTUALENV})
   endif()
+
+  execute_process(COMMAND ${PYTEST_VIRTUALENV} python -m pip install ${PYTEST_REQUIRED_PACKAGES})
 
   # Get a string unique to this testing command to name the target
   set(commandstr "")
