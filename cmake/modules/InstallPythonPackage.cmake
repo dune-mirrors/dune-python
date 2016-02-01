@@ -51,7 +51,7 @@
 #    * Into standard system paths (default)
 #    * Into the standard python path of a users home directory (through :code:`pip --user`)
 #
-#    Set this variable to a username to use the latter.
+#    Set this variable to 1 to use the user scheme.
 #
 
 include(CheckPythonPackage)
@@ -105,7 +105,7 @@ function(dune_install_python_package)
   else()
     set(USER_STRING "")
     if(DUNE_PYTHON_INSTALL_USER)
-      set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
+      set(USER_STRING --user)
     endif()
     set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} --ignore-installed ${PYINST_ADDITIONAL_PIP_PARAMS} .)
   endif()
