@@ -58,7 +58,9 @@ function(add_python_test_command)
     set(PYTEST_VIRTUALENV ${CMAKE_BINARY_DIR}/${PYTEST_VIRTUALENV})
   endif()
 
-  execute_process(COMMAND ${PYTEST_VIRTUALENV} python -m pip install ${PYTEST_REQUIRED_PACKAGES})
+  if(PYTEST_REQUIRED_PACKAGES)
+    execute_process(COMMAND ${PYTEST_VIRTUALENV} python -m pip install ${PYTEST_REQUIRED_PACKAGES})
+  endif()
 
   # Get a string unique to this testing command to name the target
   set(commandstr "")
