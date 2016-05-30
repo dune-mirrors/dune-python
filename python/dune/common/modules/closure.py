@@ -12,6 +12,7 @@ def get_dune_module_file(module, hints={}, workdir=None):
     if workdir is None:
         workdir = os.path.abspath(os.getcwd())
     workdir = os.path.join(workdir, 'gdmf')
+    os.makedirs(workdir)
 
     # Determine the URL by looking first into the hints dictionary
     # and then into our registry!
