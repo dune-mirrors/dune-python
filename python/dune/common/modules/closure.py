@@ -50,7 +50,7 @@ def get_dune_module_closure(module, repocache={}, workdir=None):
     depends_closure = []
     for mod in module.depends:
         if mod not in repocache:
-            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod), repocache=repocache)
+            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod, workdir=workdir), repocache=repocache, workdir=workdir)
         depends_closure.extend(repocache[mod].depends)
 
     # Then, update the dependencies list of the current module.
@@ -60,7 +60,7 @@ def get_dune_module_closure(module, repocache={}, workdir=None):
     suggestions_closure = []
     for mod in module.suggests:
         if mod not in repocache:
-            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod, workdir=workdir), repocache=repocache)
+            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod, workdir=workdir), repocache=repocache, workdir=workdir)
 
         # Here, we also consider requirements of suggestions, which might turn into
         # suggestions of downstream modules!
