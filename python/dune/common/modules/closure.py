@@ -8,7 +8,11 @@ from dune.common.modules.repositories import get_dune_repo_url
 from dune.common.modules.parser import parse_dune_module_file
 from itertools import chain
 
-def get_dune_module_file(module, hints={}):
+def get_dune_module_file(module, hints={}, workdir=None):
+    if workdir is None:
+        workdir = os.path.abspath(os.getcwd())
+    workdir = os.path.join(workdir, 'gdmf')
+
     # Determine the URL by looking first into the hints dictionary
     # and then into our registry!
     url = hints.get(module, None)
@@ -23,11 +27,11 @@ def get_dune_module_file(module, hints={}):
 
     # Now download the 'dune.module' file from the given URL
     # TODO Add error checking here!
-    subprocess.call("git clone -n {} --depth 1 ".format(url).split())
-    subprocess.call("git checkout HEAD dune.module".split(), cwd=os.path.join(os.path.abspath(os.getcwd()), module))
+    subprocess.call("git clone -n {} --depth 1 ".format(url).split(), cwd=workdir)
+    clonepath = os.path.join(workdir, module)
+    subprocess.call("git checkout HEAD dune.module".split(), cwd=clonepath)
 
     # Parse the module file
-    clonepath = os.path.join(os.path.abspath(os.getcwd()), module)
     modfile = parse_dune_module_file(os.path.join(clonepath, 'dune.module'))
 
     # Now delete the clone
@@ -36,7 +40,7 @@ def get_dune_module_file(module, hints={}):
     return modfile
 
 
-def get_dune_module_closure(module, repocache={}):
+def get_dune_module_closure(module, repocache={}, workdir=None):
     assert isinstance(module, DuneModuleFile)
 
     # Iterate over the list of explicitly stated dependencies and determine
@@ -55,7 +59,7 @@ def get_dune_module_closure(module, repocache={}):
     suggestions_closure = []
     for mod in module.suggests:
         if mod not in repocache:
-            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod), repocache=repocache)
+            repocache[mod] = get_dune_module_closure(get_dune_module_file(mod, workdir=workdir), repocache=repocache)
 
         # Here, we also consider requirements of suggestions, which might turn into
         # suggestions of downstream modules!
