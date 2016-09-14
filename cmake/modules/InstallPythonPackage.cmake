@@ -93,7 +93,7 @@ function(dune_install_python_package)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND python -m pip install ${ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
+    set(VENV_INSTALL_COMMAND python -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
   endif()
 
   # Construct the interpreter options for global installation
@@ -107,7 +107,7 @@ function(dune_install_python_package)
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
     endif()
-    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${ADDITIONAL_PIP_PARAMS} .)
+    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} .)
   endif()
 
   # iterate over the given interpreters
