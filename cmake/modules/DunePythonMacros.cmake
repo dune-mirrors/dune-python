@@ -44,6 +44,11 @@ include(InstallPythonScript)
 include(PythonVersion)
 include(VirtualEnvWrapper)
 
+# Also include some into the installation script
+install(CODE "set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+              include(DuneExecuteProcess)
+             ")
+
 # Look for the python interpreter. Note that this interpreter might also be
 # originating from a virtual environment.
 set(_VERSION_STRING "")
