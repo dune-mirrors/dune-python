@@ -34,6 +34,10 @@
 #        If you set it and one of your packages requires python2, you will get an error.
 #
 
+# Add python related metatargets
+add_custom_target(pytest)
+add_custom_target(pyinstall)
+
 # include all macros that dune-python offers. They can be documented better if placed
 # in cmake modules grouped together by functionality
 include(CreateVirtualEnv)

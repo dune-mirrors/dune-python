@@ -47,8 +47,6 @@
 #    Set this variable to a username to use the latter.
 #
 
-include(CheckPythonPackage)
-
 function(dune_install_python_package)
   # Parse Arguments
   set(OPTION NO_PIP NO_EDIT)
@@ -88,7 +86,7 @@ function(dune_install_python_package)
 
   # Construct the interpreter options for global installation
   if(PYINST_NO_PIP)
-    set(SYSTEM_INSTALL_OPTIONS setup.py install)
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} setup.py install)
     if(DUNE_PYTHON_INSTALL_USER)
       message("Error message: Incompatible options - NO_PIP and DUNE_PYTHON_INSTALL_USER")
     endif()
@@ -97,24 +95,40 @@ function(dune_install_python_package)
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING --user)
     endif()
-    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} .)
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
   endif()
 
   #
-  # Now define rules for `make install`.
+  # Now define rules for `make pyinstall`.
   #
 
-  check_python_package(PACKAGE pip)
+  # Determine the script directory
+  dune_module_path(MODULE dune-python
+                   RESULT DUNE_PYTHON_SCRIPT_DIR
+                   SCRIPT_DIR)
 
-  # define a rule on how to install the package during make install
-  if(DUNE_PYTHON_pip_FOUND)
-    install(CODE "dune_execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
-                                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
-                                       ERROR_MESSAGE \"Fatal error when installing the script ${PYINST_SCRIPT}\")"
-            )
-  else()
-    install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
-  endif()
+  dune_module_path(MODULE dune-python
+                   RESULT DUNE_PYTHON_MODULE_DIR
+                   CMAKE_MODULES)
+
+  # Determine a target name for installing this package
+  string(REPLACE "/" "_" name_suffix ${PYINST_PATH})
+  set(targetname "pyinstall_${name_suffix}")
+
+  # Add a custom target that globally installs this package if requested
+  add_custom_target(${targetname}
+                    COMMAND ${CMAKE_COMMAND}
+                            -DCMAKE_MODULE_PATH=${DUNE_PYTHON_MODULE_DIR}
+                            -DCMDLINE="${SYSTEM_INSTALL_CMDLINE}"
+                            -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+                             -P ${DUNE_PYTHON_SCRIPT_DIR}/install_python_package.cmake
+                    COMMENT "Installing the python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}"
+                    )
+
+  add_dependencies(pyinstall ${targetname})
+
+  # And always build the pyinstall target during `make install`.
+  install(CODE "dune_execute_process(COMMAND ${CMAKE_COMMAND} --build . --target pyinstall)")
 
   #
   # Set some paths needed for Sphinx documentation.

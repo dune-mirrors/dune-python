@@ -32,8 +32,6 @@
 #    :code:`pytest` is built.
 #
 
-add_custom_target(pytest)
-
 function(add_python_test_command)
   # Parse Arguments
   set(OPTION)
