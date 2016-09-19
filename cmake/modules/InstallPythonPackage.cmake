@@ -107,7 +107,7 @@ function(dune_install_python_package)
   check_python_package(PACKAGE pip)
 
   # define a rule on how to install the package during make install
-  if(DUNE_PYTHON_PIP_FOUND)
+  if(DUNE_PYTHON_pip_FOUND)
     install(CODE "dune_execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
                                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
                                        ERROR_MESSAGE \"Fatal error when installing the script ${PYINST_SCRIPT}\")"

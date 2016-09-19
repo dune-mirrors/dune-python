@@ -75,7 +75,7 @@ function(dune_install_python_script)
   #
 
   check_python_package(PACKAGE pip)
-  if(DUNE_PYTHON_PIP_FOUND)
+  if(DUNE_PYTHON_pip_FOUND)
     set(USER_STRING "")
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING "--user")
