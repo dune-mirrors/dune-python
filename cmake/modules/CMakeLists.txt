@@ -1,5 +1,6 @@
 install(FILES CheckPythonPackage.cmake
               CreateVirtualEnv.cmake
+              DuneExecuteProcess.cmake
               DunePythonMacros.cmake
               DunePythonTesting.cmake
               InstallPythonPackage.cmake

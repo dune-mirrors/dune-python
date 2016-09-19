@@ -81,12 +81,10 @@ function(dune_install_python_package)
   endif()
 
   # install the package into the virtual env
-  execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} ${VENV_INSTALL_COMMAND}
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
-                  RESULT_VARIABLE retcode)
-  if(NOT "${retcode}" STREQUAL "0")
-    message(FATAL_ERROR "Fatal error when installing the package at ${PYINST_PATH} into the env.")
-  endif()
+  dune_execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} ${VENV_INSTALL_COMMAND}
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
+                       ERROR_MESSAGE "Fatal error when installing the package at ${PYINST_PATH} into the env."
+                       )
 
   # Construct the interpreter options for global installation
   if(PYINST_NO_PIP)
@@ -110,13 +108,10 @@ function(dune_install_python_package)
 
   # define a rule on how to install the package during make install
   if(DUNE_PYTHON_PIP_FOUND)
-    install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
-                                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
-                                  RESULT_VARIABLE retcode)
-                  if(NOT \"${retcode}\" STREQUAL \"0\")
-                    message(FATAL_ERROR \"Fatal error when installing the script ${PYINST_SCRIPT}\")
-                  endif()"
-           )
+    install(CODE "dune_execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
+                                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
+                                       ERROR_MESSAGE \"Fatal error when installing the script ${PYINST_SCRIPT}\")"
+            )
   else()
     install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
   endif()

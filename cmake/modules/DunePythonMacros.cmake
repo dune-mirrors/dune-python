@@ -37,6 +37,7 @@
 # include all macros that dune-python offers. They can be documented better if placed
 # in cmake modules grouped together by functionality
 include(CreateVirtualEnv)
+include(DuneExecuteProcess)
 include(DunePythonTesting)
 include(InstallPythonPackage)
 include(InstallPythonScript)

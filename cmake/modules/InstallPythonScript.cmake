@@ -64,10 +64,8 @@ function(dune_install_python_script)
     file(WRITE ${CMAKE_BINARY_DIR}/cp.cmake "file(COPY ${file} DESTINATION \$ENV{VIRTUAL_ENV}/bin)")
     execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp.cmake
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when installing the script ${PYINST_SCRIPT}")
-    endif()
+                    ERROR_MESSAGE "Fatal error when installing the script ${PYINST_SCRIPT}"
+                    )
     # remove the auxiliary script
     file(REMOVE ${CMAKE_BINARY_DIR}/cp.cmake)
   endforeach()
@@ -84,11 +82,8 @@ function(dune_install_python_script)
     endif()
 
     foreach(requ ${PYINST_REQUIRES})
-      install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
-                                    RESULT_VARIABLE retcode)
-                    if(NOT \"${retcode}\" STREQUAL \"0\")
-                      message(FATAL_ERROR \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")
-                    endif()"
+      install(CODE "dune_execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
+                                         ERROR_MESSAGE \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")"
               )
     endforeach()
   else()

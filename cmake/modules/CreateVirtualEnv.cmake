@@ -122,25 +122,21 @@ function(create_virtualenv)
     message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
 
     # First, we create a virtualenv without pip
-    execute_process(COMMAND ${PYTHON_EXECUTABLE}
-                            -m ${VIRTUALENV_PACKAGE_NAME}
-                            ${NOPIP_OPTION}
-                            ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when setting up the env.")
-    endif()
+    dune_execute_process(COMMAND ${PYTHON_EXECUTABLE}
+                                -m ${VIRTUALENV_PACKAGE_NAME}
+                                ${NOPIP_OPTION}
+                                ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
+                         ERROR_MESSAGE "Fatal error when setting up the env."
+                         )
     set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
 
     # Now download the get-pip script
     file(DOWNLOAD https://bootstrap.pypa.io/get-pip.py ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py)
 
     # Now install pip into the virtualenv and remove the helper
-    execute_process(COMMAND ${VIRTUALENV_PATH}/bin/python ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when setting up the env.")
-    endif()
+    dune_execute_process(COMMAND ${VIRTUALENV_PATH}/bin/python ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py
+                         ERROR_MESSAGE "Fatal error when setting up the env."
+                         )
   endif()
 
   # Set the path to the virtualenv in the outer scope
