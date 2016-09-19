@@ -9,13 +9,6 @@
 #
 #       Relative path to the given python package source code.
 #
-#    .. cmake_param:: MAJOR_VERSION
-#       :single:
-#
-#       Set to "2" or "3" if your python package only works with
-#       python2 or python3. This will restrict the installation process to that
-#       python version.
-#
 #    .. cmake_param:: NO_PIP
 #       :option:
 #
@@ -59,7 +52,7 @@ include(CheckPythonPackage)
 function(dune_install_python_package)
   # Parse Arguments
   set(OPTION NO_PIP NO_EDIT)
-  set(SINGLE PATH MAJOR_VERSION)
+  set(SINGLE PATH)
   set(MULTI ADDITIONAL_PIP_PARAMS)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYINST "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
@@ -67,18 +60,9 @@ function(dune_install_python_package)
     message(WARNING "Unparsed arguments in dune_install_python_package: This often indicates typos!")
   endif()
 
-  # apply defaults
-  if(NOT PYINST_MAJOR_VERSION)
-    set(PYINST_MAJOR_VERSION 2 3)
-  endif()
-
-  # check for available pip packages
-  check_python_package(PACKAGE pip
-                       INTERPRETER ${PYTHON2_EXECUTABLE}
-                       RESULT PIP2_FOUND)
-  check_python_package(PACKAGE pip
-                       INTERPRETER ${PYTHON3_EXECUTABLE}
-                       RESULT PIP3_FOUND)
+  #
+  # Install the given python package into dune-python's virtualenv
+  #
 
   # Construct the installation command strings from the given options
   if(PYINST_NO_PIP)
@@ -87,13 +71,21 @@ function(dune_install_python_package)
     else()
       set(INST_COMMAND develop)
     endif()
-    set(VENV_INSTALL_COMMAND python setup.py ${INST_COMMAND})
+    set(VENV_INSTALL_COMMAND setup.py ${INST_COMMAND})
   else()
     set(EDIT_OPTION)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND python -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
+    set(VENV_INSTALL_COMMAND -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
+  endif()
+
+  # install the package into the virtual env
+  execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} ${VENV_INSTALL_COMMAND}
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
+                  RESULT_VARIABLE retcode)
+  if(NOT "${retcode}" STREQUAL "0")
+    message(FATAL_ERROR "Fatal error when installing the package at ${PYINST_PATH} into the env.")
   endif()
 
   # Construct the interpreter options for global installation
@@ -105,33 +97,33 @@ function(dune_install_python_package)
   else()
     set(USER_STRING "")
     if(DUNE_PYTHON_INSTALL_USER)
-      set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
+      set(USER_STRING --user)
     endif()
     set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} .)
   endif()
 
-  # iterate over the given interpreters
-  foreach(version ${PYINST_MAJOR_VERSION})
-    # install the package into the virtual env
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} ${VENV_INSTALL_COMMAND}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when installing the package at ${PYINST_PATH} into the env.")
-    endif()
-    # define a rule on how to install the package during make install
-    if(PIP${version}_FOUND)
-      install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
-                                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
-                                    RESULT_VARIABLE retcode)
-                    if(NOT \"${retcode}\" STREQUAL \"0\")
-                      message(FATAL_ERROR \"Fatal error when installing the script ${PYINST_SCRIPT}\")
-                    endif()"
-             )
-    else()
-      install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
-    endif()
-  endforeach()
+  #
+  # Now define rules for `make install`.
+  #
+
+  check_python_package(PACKAGE pip)
+
+  # define a rule on how to install the package during make install
+  if(DUNE_PYTHON_PIP_FOUND)
+    install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
+                                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
+                                  RESULT_VARIABLE retcode)
+                  if(NOT \"${retcode}\" STREQUAL \"0\")
+                    message(FATAL_ERROR \"Fatal error when installing the script ${PYINST_SCRIPT}\")
+                  endif()"
+           )
+  else()
+    install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
+  endif()
+
+  #
+  # Set some paths needed for Sphinx documentation.
+  #
 
   # Use a custom section to export python path to downstream modules
   set(DUNE_CUSTOM_PKG_CONFIG_SECTION "${DUNE_CUSTOM_PKG_CONFIG_SECTION}

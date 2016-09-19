@@ -1,10 +1,7 @@
 install(FILES CheckPythonPackage.cmake
-              CheckUbuntu.cmake
               CreateVirtualEnv.cmake
               DunePythonMacros.cmake
               DunePythonTesting.cmake
-              FindPython2Interp.cmake
-              FindPython3Interp.cmake
               InstallPythonPackage.cmake
               InstallPythonScript.cmake
               PythonVersion.cmake

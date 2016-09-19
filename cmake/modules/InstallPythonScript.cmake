@@ -9,14 +9,6 @@
 #
 #       The script(s) to install into the virtualenv.
 #
-#    .. cmake_param:: MAJOR_VERSION
-#       :single:
-#       :argname: version
-#
-#       Set to "2" or "3" if your python package only works with
-#       python2 or python3. This will restrict the installation process to that
-#       python version.
-#
 #    .. cmake_param:: REQUIRES
 #       :multi:
 #       :argname: requ
@@ -36,11 +28,17 @@
 #    This macro also marks the script for global installation.
 #    For details on the dune-python virtualenv concept see :ref:`virtualenv`.
 #
+#    .. note::
+#       If possible, the preferable way of installing python scripts is
+#       defining them in :code:`setup.py` of some package installed with
+#       :ref:`dune_install_python_package`. Only if that is not feasible,
+#       fall back to this function.
+#
 
 function(dune_install_python_script)
   # Parse Arguments
   set(OPTION)
-  set(SINGLE MAJOR_VERSION)
+  set(SINGLE)
   set(MULTI SCRIPT REQUIRES)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYINST "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
@@ -48,63 +46,55 @@ function(dune_install_python_script)
     message(WARNING "Unparsed arguments in dune_install_python_script: This often indicates typos!")
   endif()
 
-  # apply defaults
-  if(NOT PYINST_MAJOR_VERSION)
-    set(PYINST_MAJOR_VERSION 2 3)
-  endif()
+  #
+  # Install the requirements and the scripts into the virtualenv
+  #
 
-  # check for available pip packages
-  check_python_package(PACKAGE pip
-                       INTERPRETER ${PYTHON2_EXECUTABLE}
-                       RESULT PIP2_FOUND)
-  check_python_package(PACKAGE pip
-                       INTERPRETER ${PYTHON3_EXECUTABLE}
-                       RESULT PIP3_FOUND)
+  foreach(requ ${PYINST_REQUIRES})
+    execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} -m pip install ${requ}
+                    RESULT_VARIABLE retcode)
+    if(NOT "${retcode}" STREQUAL "0")
+      message(FATAL_ERROR "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}")
+    endif()
+  endforeach()
 
-  foreach(version ${PYINST_MAJOR_VERSION})
-    # Install the requirements into the virtualenv
-    foreach(requ ${PYINST_REQUIRES})
-      execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} pip install ${requ}
-                      RESULT_VARIABLE retcode)
-      if(NOT "${retcode}" STREQUAL "0")
-        message(FATAL_ERROR "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}")
-      endif()
-    endforeach()
+  foreach(file ${PYINST_SCRIPT})
+    # Write a copy script, this separation is necessary to evaluate the environment variable
+    # VIRTUAL_ENV actually inside the virtualenv, not in the scope of the outer cmake run.
+    file(WRITE ${CMAKE_BINARY_DIR}/cp.cmake "file(COPY ${file} DESTINATION \$ENV{VIRTUAL_ENV}/bin)")
+    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp.cmake
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                    RESULT_VARIABLE retcode)
+    if(NOT "${retcode}" STREQUAL "0")
+      message(FATAL_ERROR "Fatal error when installing the script ${PYINST_SCRIPT}")
+    endif()
+    # remove the auxiliary script
+    file(REMOVE ${CMAKE_BINARY_DIR}/cp.cmake)
+  endforeach()
 
-    # Install into the virtualenv(s)
-    foreach(file ${PYINST_SCRIPT})
-      # Write a copy script, this separation is necessary to evaluate the environment variable
-      # VIRTUAL_ENV actually inside the virtualenv, not in the scope of the outer cmake run.
-      file(WRITE ${CMAKE_BINARY_DIR}/cp.cmake "file(COPY ${file} DESTINATION \$ENV{VIRTUAL_ENV}/bin)")
-      execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp.cmake
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                      RESULT_VARIABLE retcode)
-      if(NOT "${retcode}" STREQUAL "0")
-        message(FATAL_ERROR "Fatal error when installing the script ${PYINST_SCRIPT}")
-      endif()
-      # remove the auxiliary script
-      file(REMOVE ${CMAKE_BINARY_DIR}/cp.cmake)
-    endforeach()
+  #
+  # Now define rules for `make install`.
+  #
 
-    # Install the given requirements during make install
-    if(PIP${version}_FOUND)
-      set(USER_STRING "")
-      if(DUNE_PYTHON_INSTALL_USER)
-        set(USER_STRING "--user ${DUNE_PYTHON_INSTALL_USER}")
-      endif()
-      foreach(requ ${PYINST_REQUIRES})
-        install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
-                                      RESULT_VARIABLE retcode)
-                      if(NOT \"${retcode}\" STREQUAL \"0\")
-                        message(FATAL_ERROR \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")
-                      endif()"
-                )
-      endforeach()
-    else()
-      install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install requirements of script ${PYINST_SCRIPT}\")")
+  check_python_package(PACKAGE pip)
+  if(DUNE_PYTHON_PIP_FOUND)
+    set(USER_STRING "")
+    if(DUNE_PYTHON_INSTALL_USER)
+      set(USER_STRING "--user")
     endif()
 
-    # Mark it for global installation
-    install(FILES ${PYINST_SCRIPT} DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endforeach()
+    foreach(requ ${PYINST_REQUIRES})
+      install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
+                                    RESULT_VARIABLE retcode)
+                    if(NOT \"${retcode}\" STREQUAL \"0\")
+                      message(FATAL_ERROR \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")
+                    endif()"
+              )
+    endforeach()
+  else()
+    install(CODE "message(FATAL_ERROR \"You need pip installed on the host system to install requirements of script ${PYINST_SCRIPT}\")")
+  endif()
+
+  # Mark the actual scripts for global installation
+  install(FILES ${PYINST_SCRIPT} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endfunction()

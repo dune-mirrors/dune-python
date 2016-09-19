@@ -53,7 +53,7 @@ function(add_python_test_command)
     set(PYTEST_VIRTUALENV ${CMAKE_BINARY_DIR}/dune-env)
   endif()
 
-  # Extend the givne virtualenv to be a full path.
+  # Extend the given virtualenv to be a full path.
   if(NOT IS_ABSOLUTE ${PYTEST_VIRTUALENV})
     set(PYTEST_VIRTUALENV ${CMAKE_BINARY_DIR}/${PYTEST_VIRTUALENV})
   endif()
