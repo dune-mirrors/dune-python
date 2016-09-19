@@ -17,9 +17,11 @@ function(dune_execute_process)
   cmake_parse_arguments(EXECUTE "" "ERROR_MESSAGE" "" ${ARGN})
 
   execute_process(${EXECUTE_UNPARSED_ARGUMENTS}
-                  RESULT_VARIABLE retcode)
+                  RESULT_VARIABLE retcode
+                  OUTPUT_VARIABLE log
+                  ERROR_VARIABLE log)
 
   if(NOT "${retcode}" STREQUAL "0")
-    message(FATAL_ERROR ${EXECUTE_ERROR_MESSAGE})
+    message(FATAL_ERROR "${EXECUTE_ERROR_MESSAGE}\nReturn code: ${retcode}\nDetailed log:\n${log}")
   endif()
 endfunction()
