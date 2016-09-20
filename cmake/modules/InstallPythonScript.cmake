@@ -13,20 +13,20 @@
 #       :multi:
 #       :argname: requ
 #
-#       List any non-dune python packages, that your script requires.
+#       List any python packages, that your script requires.
 #       Those packages will be installed into the virtualenv and on
 #       the system during :code:`make install` using `pip`.
 #
-#    Installs a script into the virtualenv(s) created by dune-python.
-#    It is placed in the bin folder of the env. You should write
-#    your python scripts with a shebang such as:
+#    This function installs the given scripts. It
+#    * installs it inside the dune-python virtualenv at configure time
+#    * installs it into the environment of the found python interpreter during
+#      :code:`make pyinstall` and during :code:`make install`.
+#
+#    You should write your python scripts with a shebang such as:
 #
 #    :code:`#!/usr/bin/env python`
 #
 #    This avoids hardcoding of an interpreter.
-#
-#    This macro also marks the script for global installation.
-#    For details on the dune-python virtualenv concept see :ref:`virtualenv`.
 #
 #    .. note::
 #       If possible, the preferable way of installing python scripts is

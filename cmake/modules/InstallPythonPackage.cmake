@@ -26,15 +26,14 @@
 #
 #       Parameters to add to any :code:`pip install` call (appended).
 #
-#    Installs the python package located at path into the virtualenv used by dune-python
+#    This macro installs the python package located at path. It
+#    * installs it inside the dune-python virtualenv at configure time
+#    * installs it into the environment of the found python interpreter during
+#      :code:`make pyinstall` and during :code:`make install`.
+#    * installs a wheel into the dune-python wheelhouse during :code:`make install`.
+#      This is necessary for mixing installed and non-installed Dune modules.
+#
 #    The package at the given location is expected to be a pip installable package.
-#    Also marks the given python package for global installation during :code:`make install`.
-#    By default, the python package will then be installed into the system-wide site-packages
-#    location. If you do not want to install it there, or you do not have permission to,
-#    you may optionally set :ref:`DUNE_PYTHON_INSTALL_USER` to a username. The
-#    packages will then be installed in the home directory of that user.
-#    This is done through pips :code:`--user` option. Installation in arbitrary locations is not
-#    supported to minimize :code:`PYTHONPATH` issues.
 #
 # .. cmake_variable:: DUNE_PYTHON_INSTALL_USER
 #

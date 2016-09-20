@@ -20,7 +20,7 @@
 #    .. cmake_param:: REQUIRED
 #       :option:
 #
-#       If  set, the function will error out if the package is not
+#       If set, the function will error out if the package is not
 #       found.
 #
 #
