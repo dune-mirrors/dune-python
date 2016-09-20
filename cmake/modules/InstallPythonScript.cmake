@@ -51,11 +51,9 @@ function(dune_install_python_script)
   #
 
   foreach(requ ${PYINST_REQUIRES})
-    execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} -m pip install ${requ}
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}")
-    endif()
+    dune_execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} -m pip install ${requ}
+                         ERROR_MESSAGE "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}"
+                         )
   endforeach()
 
   foreach(file ${PYINST_SCRIPT})
@@ -71,25 +69,54 @@ function(dune_install_python_script)
   endforeach()
 
   #
-  # Now define rules for `make install`.
+  # Now define rules for `make pyinstall`.
   #
 
-  check_python_package(PACKAGE pip)
-  if(DUNE_PYTHON_pip_FOUND)
-    set(USER_STRING "")
-    if(DUNE_PYTHON_INSTALL_USER)
-      set(USER_STRING "--user")
-    endif()
+  dune_module_path(MODULE dune-python
+                   RESULT DUNE_PYTHON_MODULE_DIR
+                   CMAKE_MODULES)
 
-    foreach(requ ${PYINST_REQUIRES})
-      install(CODE "dune_execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${requ}
-                                         ERROR_MESSAGE \"Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}\")"
-              )
-    endforeach()
-  else()
-    install(CODE "message(FATAL_ERROR \"You need pip installed on the host system to install requirements of script ${PYINST_SCRIPT}\")")
+  set(USER_STRING "")
+  if(DUNE_PYTHON_INSTALL_USER)
+    set(USER_STRING "--user")
   endif()
 
-  # Mark the actual scripts for global installation
-  install(FILES ${PYINST_SCRIPT} DESTINATION ${CMAKE_INSTALL_BINDIR})
+  # First install all requirements
+  foreach(requ ${PYINST_REQUIRES})
+    # Get a unique name for this target
+    string(REPLACE ";" "_" scripts_suffix ${PYINST_PATH})
+    set(targetname "pyinstall_${scripts_suffix}_${requ}")
+
+    # Construct the command line to install this requirement
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${requ})
+
+    # Add a custom target that globally installs this package if requested
+    add_custom_target(${targetname}
+                      COMMAND ${CMAKE_COMMAND}
+                             -DCMAKE_MODULE_PATH=${DUNE_PYTHON_MODULE_DIR}
+                             -DCMDLINE="${SYSTEM_INSTALL_CMDLINE}"
+                             -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+                             -P ${DUNE_PYTHON_MODULE_DIR}/install_python_package.cmake
+                      COMMENT "Installing the python package ${requ} as requirement of ${PYINST_SCRIPT}"
+                     )
+
+    add_dependencies(pyinstall ${targetname})
+  endforeach()
+
+  # Determine the directory of the current interpreter
+  get_filename_component(INST_DIR ${PYTHON_EXECUTABLE} DIRECTORY)
+
+  # Mark the actual scripts for global installation during make pyinstall
+  foreach(script ${PYINST_SCRIPT})
+    # Get a unique name for this scripts' target
+    set(targetname "pyinstall_${script}")
+
+    # Add a custom target that globally installs this script if requested
+    add_custom_target(${targetname}
+                      COMMAND ${CMAKE_COMMAND} -E ${script} ${INST_DIR}
+                      COMMENT "Globally installing the python script ${script}"
+                     )
+
+    add_dependencies(pyinstall ${targetname})
+  endforeach()
 endfunction()

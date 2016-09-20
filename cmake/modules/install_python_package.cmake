@@ -1,9 +1,5 @@
 include(CheckPythonPackage)
-check_python_package(PACKAGE pip)
-
-if(NOT DUNE_PYTHON_pip_FOUND)
-  message(FATAL_ERROR "You need pip installed on the host system to globally install python packages")
-endif()
+check_python_package(PACKAGE pip REQUIRED)
 
 string(REPLACE " " ";" CMDLINE ${CMDLINE})
 

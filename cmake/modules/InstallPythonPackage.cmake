@@ -102,11 +102,6 @@ function(dune_install_python_package)
   # Now define rules for `make pyinstall`.
   #
 
-  # Determine the script directory
-  dune_module_path(MODULE dune-python
-                   RESULT DUNE_PYTHON_SCRIPT_DIR
-                   SCRIPT_DIR)
-
   dune_module_path(MODULE dune-python
                    RESULT DUNE_PYTHON_MODULE_DIR
                    CMAKE_MODULES)
@@ -121,7 +116,7 @@ function(dune_install_python_package)
                             -DCMAKE_MODULE_PATH=${DUNE_PYTHON_MODULE_DIR}
                             -DCMDLINE="${SYSTEM_INSTALL_CMDLINE}"
                             -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-                             -P ${DUNE_PYTHON_SCRIPT_DIR}/install_python_package.cmake
+                             -P ${DUNE_PYTHON_MODULE_DIR}/install_python_package.cmake
                     COMMENT "Installing the python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}"
                     )
 
