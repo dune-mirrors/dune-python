@@ -35,7 +35,7 @@
 #
 
 # Define the location of the Dune wheelhouse
-set(DUNE_PYTHON_WHEELHOUSE ${CMAKE_INSTALL_PREFIX}/python/wheelhouse)
+set(DUNE_PYTHON_WHEELHOUSE ${CMAKE_INSTALL_PREFIX}/share/dune/python/wheelhouse)
 
 # Add python related metatargets
 add_custom_target(pytest)
