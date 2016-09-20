@@ -127,15 +127,3 @@ Note, that you can also activate a virtualenv before building your stack and
 CMake will pick up the interpreter of that env and use it as the system interpreter.
 In this case, the :code:`make pyinstall` command comes especially handy, as it
 allows you to install all dune packages into your environment.
-
-Who is behind dune-python?
-==========================
-
-If you have any questions about dune-python, please contact
-
-Dominic Kempf .. _dominic.kempf@iwr.uni-heidelberg.de: mailto:dominic.kempf@iwr.uni-heidelberg.de
-
-The work by Timo Koch and Dominic Kempf is supported by the
-ministry of science, research and arts of the federal state of
-Baden-Württemberg (Ministerium für Wissenschaft, Forschung
-und Kunst Baden-Württemberg).
