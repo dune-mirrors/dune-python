@@ -127,9 +127,6 @@ function(dune_install_python_package)
 
   add_dependencies(pyinstall ${targetname})
 
-  # And always build the pyinstall target during `make install`.
-  install(CODE "dune_execute_process(COMMAND ${CMAKE_COMMAND} --build . --target pyinstall)")
-
   #
   # Set some paths needed for Sphinx documentation.
   #
