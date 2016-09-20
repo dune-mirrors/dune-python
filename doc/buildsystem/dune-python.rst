@@ -31,6 +31,7 @@ What software is required for dune-python?
 ==========================================
 
 To use dune-python, you need:
+
 * dune-common
 * A python interpreter
 * The python package :code:`pip` installed
@@ -118,9 +119,10 @@ way: CMake knows exactly one system python interpreter, which is the one found
 by the builtin find module :code:`FindPythonInterp.cmake`.
 
 If you want to force a major version, you have two ways:
+
 * As an *end user* set either the CMake variable :ref:`DUNE_FORCE_PYTHON2` or
   :ref:`DUNE_FORCE_PYTHON3` to :code:`TRUE`.
-* As the developer of a Dune module, use the function :ref:`dune_force_python_version`
+* As a *developer* of a Dune module, use the function :ref:`dune_force_python_version`
   from within your module.
 
 Note, that you can also activate a virtualenv before building your stack and

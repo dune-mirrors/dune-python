@@ -18,6 +18,7 @@
 #       the system during :code:`make install` using `pip`.
 #
 #    This function installs the given scripts. It
+#
 #    * installs it inside the dune-python virtualenv at configure time
 #    * installs it into the environment of the found python interpreter during
 #      :code:`make pyinstall` and during :code:`make install`.

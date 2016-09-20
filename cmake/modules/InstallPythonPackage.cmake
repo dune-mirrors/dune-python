@@ -27,6 +27,7 @@
 #       Parameters to add to any :code:`pip install` call (appended).
 #
 #    This macro installs the python package located at path. It
+#
 #    * installs it inside the dune-python virtualenv at configure time
 #    * installs it into the environment of the found python interpreter during
 #      :code:`make pyinstall` and during :code:`make install`.
