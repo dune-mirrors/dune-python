@@ -148,8 +148,8 @@ function(dune_install_python_package)
   set(WHEEL_COMMAND ${PYTHON_EXECUTABLE} ${WHEEL_COMMAND} -w ${DUNE_PYTHON_WHEELHOUSE} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
 
   install(CODE "dune_execute_process(COMMAND ${WHEEL_COMMAND}
-                                     ERROR_MESSAGE "Error installing wheel for python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}"
-                )
+                                     ERROR_MESSAGE \"Error installing wheel for python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}\"
+)
                "
           )
 
