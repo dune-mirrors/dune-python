@@ -87,4 +87,5 @@ create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
                           NAME dune-env)
 
 # During `make install`, also install all python stuff
-install(CODE "dune_execute_process(COMMAND ${CMAKE_COMMAND} --build . --target pyinstall)")
+install(CODE "message(\"Installing python packages defined in ${CMAKE_PROJECT_NAME}...\")
+              dune_execute_process(COMMAND ${CMAKE_COMMAND} --build . --target pyinstall)")
