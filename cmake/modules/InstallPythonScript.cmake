@@ -91,7 +91,7 @@ function(dune_install_python_script)
   # First install all requirements
   foreach(requ ${PYINST_REQUIRES})
     # Get a unique name for this target
-    string(REPLACE ";" "_" scripts_suffix ${PYINST_PATH})
+    string(REPLACE ";" "_" scripts_suffix ${PYINST_SCRIPT})
     set(targetname "pyinstall_${scripts_suffix}_${requ}")
 
     # Construct the command line to install this requirement
