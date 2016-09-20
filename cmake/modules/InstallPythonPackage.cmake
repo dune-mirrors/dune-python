@@ -47,10 +47,6 @@
 #    Set this variable to a username to use the latter.
 #
 
-# Define the location of the Dune wheelhouse
-set(DUNE_PYTHON_WHEELHOUSE ${CMAKE_INSTALL_PREFIX}/python/wheelhouse)
-
-
 function(dune_install_python_package)
   # Parse Arguments
   set(OPTION NO_PIP NO_EDIT)

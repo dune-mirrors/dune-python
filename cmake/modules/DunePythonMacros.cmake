@@ -34,6 +34,9 @@
 #        If you set it and one of your packages requires python2, you will get an error.
 #
 
+# Define the location of the Dune wheelhouse
+set(DUNE_PYTHON_WHEELHOUSE ${CMAKE_INSTALL_PREFIX}/python/wheelhouse)
+
 # Add python related metatargets
 add_custom_target(pytest)
 add_custom_target(pyinstall)
@@ -48,8 +51,9 @@ include(InstallPythonScript)
 include(PythonVersion)
 include(VirtualEnvWrapper)
 
-# Also include some into the installation script
+# Also set some variables and includes in the installation script
 install(CODE "set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+              set(DUNE_PYTHON_WHEELHOUSE ${DUNE_PYTHON_WHEELHOUSE})
               include(DuneExecuteProcess)
              ")
 
