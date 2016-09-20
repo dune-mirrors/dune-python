@@ -22,6 +22,7 @@ function(dune_execute_process)
                   ERROR_VARIABLE log)
 
   if(NOT "${retcode}" STREQUAL "0")
-    message(FATAL_ERROR "${EXECUTE_ERROR_MESSAGE}\nReturn code: ${retcode}\nDetailed log:\n${log}")
+    cmake_parse_arguments(ERR "" "" "COMMAND" ${EXECUTE_UNPARSED_ARGUMENTS})
+    message(FATAL_ERROR "${EXECUTE_ERROR_MESSAGE}\nRun command:${ERR_COMMAND}\nReturn code: ${retcode}\nDetailed log:\n${log}")
   endif()
 endfunction()
