@@ -24,10 +24,12 @@ add_subdirectory(doc/buildsystem)
 dune_install_python_package(PATH python)
 
 add_python_test_command(COMMAND python -m pytest
-                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/python)
+                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/python
+                        REQUIRED_PACKAGES pytest)
 
 add_python_test_command(COMMAND python -m pytest --pep8
-                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/python)
+                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/python
+                        REQUIRED_PACKAGES pytest-pep8)
 
 # finalize the dune project, e.g. generating config.h etc.
 finalize_dune_project(GENERATE_CONFIG_H_CMAKE)
