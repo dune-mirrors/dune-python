@@ -67,19 +67,23 @@ function(dune_install_python_package)
   #
 
   # Construct the installation command strings from the given options
+  set(WHEEL_ARG "")
+  if(IS_DIRECTORY ${DUNE_PYTHON_WHEELHOUSE})
+    set(WHEEL_ARG "--find-links=${DUNE_PYTHON_WHEELHOUSE}")
+  endif()
   if(PYINST_NO_PIP)
     if(PYINST_NO_EDIT)
       set(INST_COMMAND install)
     else()
       set(INST_COMMAND develop)
     endif()
-    set(VENV_INSTALL_COMMAND setup.py ${INST_COMMAND})
+    set(VENV_INSTALL_COMMAND setup.py ${INST_COMMAND} ${WHEEL_ARG})
   else()
     set(EDIT_OPTION)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} --find-links=${DUNE_PYTHON_WHEELHOUSE} .)
+    set(VENV_INSTALL_COMMAND -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} ${WHEEL_ARG} .)
   endif()
 
   # install the package into the virtual env
@@ -90,7 +94,7 @@ function(dune_install_python_package)
 
   # Construct the interpreter options for global installation
   if(PYINST_NO_PIP)
-    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} setup.py install)
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} setup.py install ${WHEEL_ARG})
     if(DUNE_PYTHON_INSTALL_USER)
       message("Error message: Incompatible options - NO_PIP and DUNE_PYTHON_INSTALL_USER")
     endif()

@@ -50,8 +50,14 @@ function(dune_install_python_script)
   # Install the requirements and the scripts into the virtualenv
   #
 
+  # Construct the installation command strings from the given options
+  set(WHEEL_ARG "")
+  if(IS_DIRECTORY ${DUNE_PYTHON_WHEELHOUSE})
+    set(WHEEL_ARG "--find-links=${DUNE_PYTHON_WHEELHOUSE}")
+  endif()
+
   foreach(requ ${PYINST_REQUIRES})
-    dune_execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} -m pip install --find-links=${DUNE_PYTHON_WHEELHOUSE} ${requ}
+    dune_execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} -m pip install ${WHEEL_ARG} ${requ}
                          ERROR_MESSAGE "Fatal error when installing ${requ} as a requirement for ${PYINST_SCRIPT}"
                          )
   endforeach()
@@ -88,7 +94,7 @@ function(dune_install_python_script)
     set(targetname "pyinstall_${scripts_suffix}_${requ}")
 
     # Construct the command line to install this requirement
-    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} --find-links=${DUNE_PYTHON_WHEELHOUSE} ${requ})
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${WHEEL_ARG} ${requ})
 
     # Add a custom target that globally installs this package if requested
     add_custom_target(${targetname}
