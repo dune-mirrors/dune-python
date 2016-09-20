@@ -4,6 +4,7 @@ install(FILES CheckPythonPackage.cmake
               DunePythonMacros.cmake
               DunePythonTesting.cmake
               InstallPythonPackage.cmake
+              install_python_package.cmake
               InstallPythonScript.cmake
               PythonVersion.cmake
               VirtualEnvWrapper.cmake
