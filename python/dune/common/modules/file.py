@@ -1,5 +1,6 @@
 """ The data structure for a dune.module file """
 
+
 class DuneModuleFile(object):
     def __init__(self, module=None, version=None, maintainer=None, whitespace_hook=False, depends=[], suggests=[]):
         assert(module)
