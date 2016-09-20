@@ -67,10 +67,10 @@ function(dune_install_python_script)
     # Write a copy script, this separation is necessary to evaluate the environment variable
     # VIRTUAL_ENV actually inside the virtualenv, not in the scope of the outer cmake run.
     file(WRITE ${CMAKE_BINARY_DIR}/cp.cmake "file(COPY ${file} DESTINATION \$ENV{VIRTUAL_ENV}/bin)")
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp.cmake
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    ERROR_MESSAGE "Fatal error when installing the script ${PYINST_SCRIPT}"
-                    )
+    dune_execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cp.cmake
+                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                         ERROR_MESSAGE "Fatal error when installing the script ${PYINST_SCRIPT}"
+                         )
     # remove the auxiliary script
     file(REMOVE ${CMAKE_BINARY_DIR}/cp.cmake)
   endforeach()
