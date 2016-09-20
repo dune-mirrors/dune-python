@@ -70,6 +70,12 @@ function(dune_install_python_package)
   set(WHEEL_ARG "")
   if(IS_DIRECTORY ${DUNE_PYTHON_WHEELHOUSE})
     set(WHEEL_ARG "--find-links=${DUNE_PYTHON_WHEELHOUSE}")
+    #
+    # The following line is a bummer!
+    # We cannot have editable packages once we start using global installations!
+    # This is related to the nightmare that is https://github.com/pypa/pip/issues/3
+    #
+    set(PYINST_NO_EDIT TRUE)
   endif()
   if(PYINST_NO_PIP)
     if(PYINST_NO_EDIT)
