@@ -47,6 +47,10 @@
 #    Set this variable to a username to use the latter.
 #
 
+# Define the location of the Dune wheelhouse
+set(DUNE_PYTHON_WHEELHOUSE ${CMAKE_INSTALL_PREFIX}/python/wheelhouse)
+
+
 function(dune_install_python_package)
   # Parse Arguments
   set(OPTION NO_PIP NO_EDIT)
@@ -75,7 +79,7 @@ function(dune_install_python_package)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
+    set(VENV_INSTALL_COMMAND -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} --find-links=${DUNE_PYTHON_WHEELHOUSE} .)
   endif()
 
   # install the package into the virtual env
@@ -95,7 +99,7 @@ function(dune_install_python_package)
     if(DUNE_PYTHON_INSTALL_USER)
       set(USER_STRING --user)
     endif()
-    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} --find-links=${DUNE_PYTHON_WHEELHOUSE} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
   endif()
 
   #
@@ -121,6 +125,29 @@ function(dune_install_python_package)
                     )
 
   add_dependencies(pyinstall ${targetname})
+
+  #
+  # Define rules for `make install` that install a wheel into a central wheelhouse
+  #
+  # NB: This is necessary, to allow mixing installed and non-installed modules
+  #     with python packages. The wheelhouse will allow to install any missing
+  #     python packages into the virtualenv.
+  #
+
+  # Construct the wheel installation commandline
+  if(PYINST_NO_PIP)
+    set(WHEEL_COMMAND setup.py bdist_wheel)
+  else()
+    set(WHEEL_COMMAND -m pip wheel)
+  endif()
+
+  set(WHEEL_COMMAND ${PYTHON_EXECUTABLE} ${WHEEL_COMMAND} -w ${DUNE_PYTHON_WHEELHOUSE} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
+
+  install(CODE "dune_execute_process(COMMAND ${WHEEL_COMMAND}
+                                     ERROR_MESSAGE "Error installing wheel for python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}"
+                )
+               "
+          )
 
   #
   # Set some paths needed for Sphinx documentation.
