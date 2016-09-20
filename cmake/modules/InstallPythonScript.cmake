@@ -121,6 +121,7 @@ function(dune_install_python_script)
     # Add a custom target that globally installs this script if requested
     add_custom_target(${targetname}
                       COMMAND ${CMAKE_COMMAND} -E copy ${script} ${INST_DIR}
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                       COMMENT "Globally installing the python script ${script}"
                      )
 
