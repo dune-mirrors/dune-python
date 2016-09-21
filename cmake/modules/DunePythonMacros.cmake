@@ -45,6 +45,7 @@ add_custom_target(pyinstall)
 # in cmake modules grouped together by functionality
 include(CreateVirtualEnv)
 include(DuneExecuteProcess)
+include(DunePathHelper)
 include(DunePythonTesting)
 include(DuneSphinxCMakeDoc)
 include(InstallPythonPackage)
