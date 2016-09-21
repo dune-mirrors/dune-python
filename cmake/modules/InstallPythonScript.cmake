@@ -117,7 +117,8 @@ function(dune_install_python_script)
   # Mark the actual scripts for global installation during make pyinstall
   foreach(script ${PYINST_SCRIPT})
     # Get a unique name for this scripts' target
-    set(targetname "pyinstall_${script}")
+    string(REPLACE "/" "_" script_suffix ${script})
+    set(targetname "pyinstall_${script_suffix}")
 
     # Add a custom target that globally installs this script if requested
     add_custom_target(${targetname}
