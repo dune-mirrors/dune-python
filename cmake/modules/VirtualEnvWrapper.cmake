@@ -38,14 +38,6 @@
 #       yourself, but you rarely have to.
 #
 
-# Determine the directory, that the dune-python cmake macros are located
-# This actually depends on this module being dune-python itself, or some other
-if(CMAKE_PROJECT_NAME STREQUAL dune-python)
-  set(DUNE_PYTHON_TEMPLATES_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-else()
-  set(DUNE_PYTHON_TEMPLATES_PATH ${dune-python_MODULE_PATH})
-endif()
-
 # TODO: Check the type of system we are operating on here and choose
 # an extension for wrapper templates accordingly.
 set(DUNE_PYTHON_SCRIPT_EXT sh)
@@ -82,6 +74,11 @@ function(create_virtualenv_wrapper)
 
   # Write a message about generating the script.
   message("-- Writing a wrapper script around virtualenv to ${ENV_WRAPPER_PATH}/${ENV_WRAPPER_NAME}")
+
+  # Get the dune-python module path for the template
+  dune_module_path(MODULE dune-python
+                   RESULT DUNE_PYTHON_TEMPLATES_PATH
+                   CMAKE_MODULES)
 
   # use configure_file to actually write a wrapper script
   configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.${DUNE_PYTHON_SCRIPT_EXT}.in

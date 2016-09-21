@@ -8,6 +8,7 @@ from dune.common.modules.repositories import get_dune_repo_url
 from dune.common.modules.parser import parse_dune_module_file
 from itertools import chain
 
+
 def get_dune_module_file(module, hints={}, workdir=None):
     if workdir is None:
         workdir = os.path.abspath(os.getcwd())
