@@ -12,12 +12,28 @@ In particular, dune-python offers:
 
 * A virtualenv that lives in a cmake build directory, where
   all python packages shipped by dune modules are installed.
-* Integration of the python package installation process into
-  the cmake build system.
-* CMake modules helpful with python issues, such as searching
-  for installed packages etc.
+  This allows the use of python code at configure time and at
+  build time.
+* Provides rules for a target :code:`make pyinstall`, that installs
+  all python packages and scripts from the current module into the
+  environment of the python interpreter that was found by CMake.
+* The same happens during :code:`make install` in addition to any
+  other install rules your project specifies. 
+* Python testing commands are wrapped into a target :code:`make pytest`.
 * A python package :code:`dune.common`, which is supposed to be the
   *dune-common* of dune-related python packages.
+
+.. _requirements:
+
+What software is required for dune-python?
+==========================================
+
+To use dune-python, you need:
+
+* dune-common
+* A python interpreter
+* The python package :code:`pip` installed
+* One of the python packages :code:`virtualenv` or :code:`venv` installed
 
 .. _howto:
 
@@ -74,50 +90,38 @@ but one virtualenv per python version, no matter how many Dune modules
 provide python packages. That virtualenv lives in the build directory
 of the first non-installed module of the build stack.
 
-Every module that depends on dune-python will have a set of scripts
-in its build directory to access the virtualenv. Currently those are:
-
-* :code:`dune-env-{2,3}` runs the command given by its arguments within the
-  python{2,3} virtualenv and returns the return value.
-* :code:`dune-env` is the same as above with python3 if available and python2
-  otherwise.
-* :code:`python{2,3}` gives you a python2 or python3 interpreter running in
-  the virtualenv
-* :code:`python` is the same as above with python3 if available and python2
-  otherwise.
+Every module that depends on dune-python will have a script
+in its build directory to access the virtualenv. It is called
+:code:`dune-env`.
 
 Note, that those scripts are bash scripts. However, the extension :code:`sh`
 has been dropped to allow to write portable code. Implementations
 of those scripts for other platforms can be implemented if needed.
 
-Note, that the virtualenv has access to the system site packages
-(otherwise you couldn't combine installed dune modules with local
-ones). Still, you do need internet connection to install python
-packages inside the virtualenv, that ar enot present on the host system.
-
 The packages are installed in the virtualenv with :code:`pip --editable`,
 which is the equivalent of :code:`python setup.py develop`. That means
 you can work on the python code in your module without upgrading
-the virtualenv manually.
-
-Portability is not yet implemented (but can be achieved within CMake),
-so dune-python is currently limited to UNIX systems.
-
+the virtualenv manually. Note, that once you are starting to mix installed
+and non-installed Dune modules defining python packages, the :code:`--editable`
+flag will be dropped. This is caused by this severe issue: https://github.com/pypa/pip/issues/3
 
 .. _2vs3:
 
-Python2 vs. Python3
-===================
+The system interpreter (aka Python2 vs. Python3)
+================================================
 
-The transition from python2 to python3 is a major issue when treating
-build system issues. dune-python aims at full support for both python2
-and python3.
+As of September 2016, dune-python tackles the 2 vs. 3 issue in the following
+way: CMake knows exactly one system python interpreter, which is the one found
+by the builtin find module :code:`FindPythonInterp.cmake`.
 
-There are two virtualenvs: One for python2, one for python3. All scripts
-have the version number in their naming.
+If you want to force a major version, you have two ways:
 
-If your python package is written to support both python2 and python3
-you should not be forced to take specific measures. If you do not support
-one of them, read the documentation of the cmake modules in dune-python/cmake/modules
-carefully. All macros offer some parameters to customize the build process
-for different python versions.
+* As an *end user* set either the CMake variable :ref:`DUNE_FORCE_PYTHON2` or
+  :ref:`DUNE_FORCE_PYTHON3` to :code:`TRUE`.
+* As a *developer* of a Dune module, use the function :ref:`dune_force_python_version`
+  from within your module.
+
+Note, that you can also activate a virtualenv before building your stack and
+CMake will pick up the interpreter of that env and use it as the system interpreter.
+In this case, the :code:`make pyinstall` command comes especially handy, as it
+allows you to install all dune packages into your environment.

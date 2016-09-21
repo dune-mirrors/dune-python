@@ -15,12 +15,6 @@
 #       The working directory of the command. Defaults to
 #       the current build directory.
 #
-#    .. cmake_param:: VIRTUALENV
-#       :single:
-#
-#       The virtualenv wrapper to use. Defaults to the
-#       standard dune one.
-#
 #    .. cmake_param:: REQUIRED_PACKAGES
 #       :multi:
 #
@@ -31,8 +25,6 @@
 #    build system. Added commands are run, when the target
 #    :code:`pytest` is built.
 #
-
-add_custom_target(pytest)
 
 function(add_python_test_command)
   # Parse Arguments
@@ -53,13 +45,14 @@ function(add_python_test_command)
     set(PYTEST_VIRTUALENV ${CMAKE_BINARY_DIR}/dune-env)
   endif()
 
-  # Extend the givne virtualenv to be a full path.
+  # Extend the given virtualenv to be a full path.
   if(NOT IS_ABSOLUTE ${PYTEST_VIRTUALENV})
     set(PYTEST_VIRTUALENV ${CMAKE_BINARY_DIR}/${PYTEST_VIRTUALENV})
   endif()
 
   if(PYTEST_REQUIRED_PACKAGES)
-    execute_process(COMMAND ${PYTEST_VIRTUALENV} python -m pip install ${PYTEST_REQUIRED_PACKAGES})
+    dune_execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} -m pip install ${PYTEST_REQUIRED_PACKAGES}
+                         ERROR_MESSAGE "Error installing dependencies of testing command")
   endif()
 
   # Get a string unique to this testing command to name the target

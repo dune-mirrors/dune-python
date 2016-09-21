@@ -4,6 +4,7 @@ from __future__ import print_function
 from pyparsing import *
 from dune.common.modules.file import DuneModuleFile
 
+
 class DuneModuleFileParser(object):
     _debug = False
 
@@ -16,7 +17,7 @@ class DuneModuleFileParser(object):
             print("The BNF: {}".format(self._parser))
 
     def _bnf_from_key(self, key):
-        bnf = Literal('{}:'.format(key)).suppress() + Word(printables).setParseAction(self.setVariable(key.replace('-','_').lower()))
+        bnf = Literal('{}:'.format(key)).suppress() + Word(printables).setParseAction(self.setVariable(key.replace('-', '_').lower()))
         if DuneModuleFileParser._debug:
             print("Constructing a BNF for {}: {}".format(key, bnf))
         return bnf
@@ -70,6 +71,7 @@ class DuneModuleFileParser(object):
             self._parser.parseString(line)
 
         return DuneModuleFile(**self.result)
+
 
 def parse_dune_module_file(filename):
     return DuneModuleFileParser().apply(filename)

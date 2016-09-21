@@ -1,40 +1,7 @@
-# Prerequisites
+# What is dune-python about?
 
-The following software is required to work with dune-python:
-
-* [dune-common](http://www.dune-project.org)
-* A python interpreter
-* [pip](https://pypi.python.org/pypi/pip)
-
-To work with python2:
-
-* [virtualenv](https://pypi.python.org/pypi/virtualenv)
-
-To build the documentation:
-
-* [sphinx](https://pypi.python.org/pypi/Sphinx/)
-
-# What is dune-python?
-
-dune-python provides infrastructure for dune modules that do
-ship python packages.
-
-In particular, dune-python offers:
-
-* A virtualenv that lives in a cmake build directory, where
-  all python packages shipped by dune modules are installed.
-* Integration of the python package installation process into
-  the cmake build system.
-* CMake modules helpful with python issues, such as searching
-  for installed packages etc.
-* A python package `dune.common`, which is supposed to be the
-  "dune-common" of dune-related python packages.
-
-# Documentation
-
-Type `make doc` in the build directory of dune-python to generate
-the html documentation of dune-python. It is placed in the subfolder
-`doc/sphinx/html`.
+Please [click here](https://dune-project.org/sphinx/dune-python) for comprehensive information about
+dune-python.
 
 # Getting help
 

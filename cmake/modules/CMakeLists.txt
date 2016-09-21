@@ -1,13 +1,11 @@
 install(FILES CheckPythonPackage.cmake
-              CheckUbuntu.cmake
               CreateVirtualEnv.cmake
+              DuneExecuteProcess.cmake
               DunePythonMacros.cmake
               DunePythonTesting.cmake
               DuneSphinxCMakeDoc.cmake
-              FindPython2Interp.cmake
-              FindPython3Interp.cmake
-              FindSphinx.cmake
               InstallPythonPackage.cmake
+              install_python_package.cmake
               InstallPythonScript.cmake
               PythonVersion.cmake
               sphinx_cmake_dune.py

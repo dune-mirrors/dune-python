@@ -19,12 +19,20 @@
 #       The working directory where to place virtualenv directory in.
 #       Defaults to the root build directory :code:`CMAKE_BINARY_DIR`.
 #
-#    .. cmake_param:: REAL_PATH
+#    .. cmake_param:: EXPORT_PATH
 #       :single:
 #
 #       The variable name given to this parameter will be set to the directory
 #       where the requested virtualenv is located. If used together with
 #       :code:`ONLY_ONCE`, this could point into a different modules' build directory.
+#       Defaults to :code:`DUNE_PYTHON_VIRTUALENV_PATH`.
+#
+#    .. cmake_param:: EXPORT_INTERPRETER
+#       :single:
+#
+#       The variable name given to this parameter will be set to the location of
+#       the python interpreter in dune-pythons virtualenv. Defaults to
+#       :code:`DUNE_PYTHON_VIRTUALENV_INTERPRETER`
 #
 #    .. cmake_param:: ONLY_ONCE
 #       :option:
@@ -33,12 +41,6 @@
 #       modules this module depends on and only create a virtualenv, if no
 #       virtualenv has been created yet. This only checks for virtualenvs in the
 #       toplevel build directories of all those modules.
-#
-#    .. cmake_param:: INTERPRETER
-#       :single:
-#
-#       The python interpreter to be used within the virtualenv. Defaults to
-#       :code:`PYTHON2_EXECUTABLE` defined by :ref:`FindPython2Interp`.
 #
 #    See :ref:`virtualenv` for details on what the Dune virtualenvs are used for.
 #
@@ -56,7 +58,7 @@ include(CheckPythonPackage)
 function(create_virtualenv)
   # Parse Arguments
   set(OPTION ONLY_ONCE)
-  set(SINGLE PATH NAME REAL_PATH INTERPRETER)
+  set(SINGLE PATH NAME EXPORT_PATH EXPORT_INTERPRETER)
   set(MULTI)
   include(CMakeParseArguments)
   cmake_parse_arguments(CREATE_ENV "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
@@ -65,11 +67,14 @@ function(create_virtualenv)
   endif()
 
   # apply defaults
-  if(NOT CREATE_ENV_INTERPRETER)
-    set(CREATE_ENV_INTERPRETER ${PYTHON2_EXECUTABLE})
-  endif()
   if(NOT CREATE_ENV_PATH)
     set(CREATE_ENV_PATH ${CMAKE_BINARY_DIR})
+  endif()
+  if(NOT CREATE_ENV_EXPORT_PATH)
+    set(CREATE_ENV_EXPORT_PATH DUNE_PYTHON_VIRTUALENV_PATH)
+  endif()
+  if(NOT CREATE_ENV_EXPORT_INTERPRETER)
+    set(CREATE_ENV_EXPORT_INTERPRETER DUNE_PYTHON_VIRTUALENV_INTERPRETER)
   endif()
 
   # check whether a virtualenv that matches our need already accepts
@@ -92,14 +97,12 @@ function(create_virtualenv)
     # determine the name of the virtualenv package. Its either virtualenv or venv
     set(VIRTUALENV_PACKAGE_NAME)
     check_python_package(PACKAGE virtualenv
-                         INTERPRETER ${CREATE_ENV_INTERPRETER}
                          RESULT VIRTUALENV_FOUND)
     if(VIRTUALENV_FOUND)
       set(VIRTUALENV_PACKAGE_NAME virtualenv)
       set(NOPIP_OPTION --no-pip)
     endif()
     check_python_package(PACKAGE venv
-                         INTERPRETER ${CREATE_ENV_INTERPRETER}
                          RESULT VENV_FOUND)
     if(VENV_FOUND)
       set(VIRTUALENV_PACKAGE_NAME venv)
@@ -108,7 +111,7 @@ function(create_virtualenv)
 
     # error out if none of the packages could be found.
     if(NOT VIRTUALENV_PACKAGE_NAME)
-      message(FATAL_ERROR "You need either the package virtualenv or venv installed on the host system")
+      message(FATAL_ERROR "You need either the package virtualenv or venv installed!")
     endif()
 
     # Do the actual thing and build the virtualenv. As many debianish systems have some
@@ -119,38 +122,24 @@ function(create_virtualenv)
     message("Building a virtual env in ${CMAKE_BINARY_DIR}/${CREATE_ENV_NAME}...")
 
     # First, we create a virtualenv without pip
-    execute_process(COMMAND ${CREATE_ENV_INTERPRETER}
-                            -m ${VIRTUALENV_PACKAGE_NAME}
-                            --system-site-packages
-                            ${NOPIP_OPTION}
-                            ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when setting up the env.")
-    endif()
+    dune_execute_process(COMMAND ${PYTHON_EXECUTABLE}
+                                -m ${VIRTUALENV_PACKAGE_NAME}
+                                ${NOPIP_OPTION}
+                                ${CREATE_ENV_PATH}/${CREATE_ENV_NAME}
+                         ERROR_MESSAGE "Fatal error when setting up the env."
+                         )
     set(VIRTUALENV_PATH ${CREATE_ENV_PATH}/${CREATE_ENV_NAME})
 
     # Now download the get-pip script
     file(DOWNLOAD https://bootstrap.pypa.io/get-pip.py ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py)
 
-    # Get a shell wrapper around the created virtualenv
-    if(CMAKE_PROJECT_NAME STREQUAL dune-python)
-      set(DUNE_PYTHON_TEMPLATES_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-    else()
-      set(DUNE_PYTHON_TEMPLATES_PATH ${dune-python_MODULE_PATH})
-    endif()
-    set(DUNE_VIRTUALENV_PATH ${VIRTUALENV_PATH})
-    configure_file(${DUNE_PYTHON_TEMPLATES_PATH}/env-wrapper.sh.in ${CMAKE_BINARY_DIR}/get-pip-env.sh)
-
     # Now install pip into the virtualenv and remove the helper
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/get-pip-env.sh python ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py
-                    RESULT_VARIABLE retcode)
-    if(NOT "${retcode}" STREQUAL "0")
-      message(FATAL_ERROR "Fatal error when setting up the env.")
-    endif()
-    file(REMOVE ${CMAKE_BINARY_DIR}/get-pip-env.sh)
+    dune_execute_process(COMMAND ${VIRTUALENV_PATH}/bin/python ${CMAKE_CURRENT_BINARY_DIR}/get-pip.py
+                         ERROR_MESSAGE "Fatal error when setting up the env."
+                         )
   endif()
 
   # Set the path to the virtualenv in the outer scope
-  set(${CREATE_ENV_REAL_PATH} ${VIRTUALENV_PATH} PARENT_SCOPE)
+  set(${CREATE_ENV_EXPORT_PATH} ${VIRTUALENV_PATH} PARENT_SCOPE)
+  set(${CREATE_ENV_EXPORT_INTERPRETER} ${VIRTUALENV_PATH}/bin/python PARENT_SCOPE)
 endfunction()

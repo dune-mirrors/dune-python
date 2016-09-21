@@ -9,13 +9,6 @@
 #
 #       Relative path to the given python package source code.
 #
-#    .. cmake_param:: MAJOR_VERSION
-#       :single:
-#
-#       Set to "2" or "3" if your python package only works with
-#       python2 or python3. This will restrict the installation process to that
-#       python version.
-#
 #    .. cmake_param:: NO_PIP
 #       :option:
 #
@@ -33,15 +26,15 @@
 #
 #       Parameters to add to any :code:`pip install` call (appended).
 #
-#    Installs the python package located at path into the virtualenv used by dune-python
+#    This macro installs the python package located at path. It
+#
+#    * installs it inside the dune-python virtualenv at configure time
+#    * installs it into the environment of the found python interpreter during
+#      :code:`make pyinstall` and during :code:`make install`.
+#    * installs a wheel into the dune-python wheelhouse during :code:`make install`.
+#      This is necessary for mixing installed and non-installed Dune modules.
+#
 #    The package at the given location is expected to be a pip installable package.
-#    Also marks the given python package for global installation during :code:`make install`.
-#    By default, the python package will then be installed into the system-wide site-packages
-#    location. If you do not want to install it there, or you do not have permission to,
-#    you may optionally set :ref:`DUNE_PYTHON_INSTALL_USER` to a username. The
-#    packages will then be installed in the home directory of that user.
-#    This is done through pips :code:`--user` option. Installation in arbitrary locations is not
-#    supported to minimize :code:`PYTHONPATH` issues.
 #
 # .. cmake_variable:: DUNE_PYTHON_INSTALL_USER
 #
@@ -54,12 +47,10 @@
 #    Set this variable to a username to use the latter.
 #
 
-include(CheckPythonPackage)
-
 function(dune_install_python_package)
   # Parse Arguments
   set(OPTION NO_PIP NO_EDIT)
-  set(SINGLE PATH MAJOR_VERSION)
+  set(SINGLE PATH)
   set(MULTI ADDITIONAL_PIP_PARAMS)
   include(CMakeParseArguments)
   cmake_parse_arguments(PYINST "${OPTION}" "${SINGLE}" "${MULTI}" ${ARGN})
@@ -67,64 +58,106 @@ function(dune_install_python_package)
     message(WARNING "Unparsed arguments in dune_install_python_package: This often indicates typos!")
   endif()
 
-  # apply defaults
-  if(NOT PYINST_MAJOR_VERSION)
-    set(PYINST_MAJOR_VERSION 2 3)
-  endif()
-
-  # check for available pip packages
-  check_python_package(PACKAGE pip
-                       INTERPRETER ${PYTHON2_EXECUTABLE}
-                       RESULT PIP2_FOUND)
-  check_python_package(PACKAGE pip
-                       INTERPRETER ${PYTHON3_EXECUTABLE}
-                       RESULT PIP3_FOUND)
+  #
+  # Install the given python package into dune-python's virtualenv
+  #
 
   # Construct the installation command strings from the given options
+  set(WHEEL_ARG "")
+  if(IS_DIRECTORY ${DUNE_PYTHON_WHEELHOUSE})
+    set(WHEEL_ARG "--find-links=${DUNE_PYTHON_WHEELHOUSE}")
+    #
+    # The following line is a bummer!
+    # We cannot have editable packages once we start using global installations!
+    # This is related to the nightmare that is https://github.com/pypa/pip/issues/3
+    #
+    set(PYINST_NO_EDIT TRUE)
+  endif()
   if(PYINST_NO_PIP)
     if(PYINST_NO_EDIT)
       set(INST_COMMAND install)
     else()
       set(INST_COMMAND develop)
     endif()
-    set(VENV_INSTALL_COMMAND python setup.py ${INST_COMMAND})
+    set(VENV_INSTALL_COMMAND setup.py ${INST_COMMAND} ${WHEEL_ARG})
   else()
     set(EDIT_OPTION)
     if(NOT PYINST_NO_EDIT)
       set(EDIT_OPTION -e)
     endif()
-    set(VENV_INSTALL_COMMAND python -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} .)
+    set(VENV_INSTALL_COMMAND -m pip install ${PYINST_ADDITIONAL_PIP_PARAMS} ${EDIT_OPTION} ${WHEEL_ARG} .)
   endif()
+
+  # install the package into the virtual env
+  dune_execute_process(COMMAND ${DUNE_PYTHON_VIRTUALENV_INTERPRETER} ${VENV_INSTALL_COMMAND}
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}
+                       ERROR_MESSAGE "Fatal error when installing the package at ${PYINST_PATH} into the env."
+                       )
 
   # Construct the interpreter options for global installation
   if(PYINST_NO_PIP)
-    set(SYSTEM_INSTALL_OPTIONS setup.py install)
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} setup.py install ${WHEEL_ARG})
     if(DUNE_PYTHON_INSTALL_USER)
       message("Error message: Incompatible options - NO_PIP and DUNE_PYTHON_INSTALL_USER")
     endif()
   else()
     set(USER_STRING "")
     if(DUNE_PYTHON_INSTALL_USER)
-      set(USER_STRING --user ${DUNE_PYTHON_INSTALL_USER})
+      set(USER_STRING --user)
     endif()
-    set(SYSTEM_INSTALL_OPTIONS -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} .)
+    set(SYSTEM_INSTALL_CMDLINE ${PYTHON_EXECUTABLE} -m pip install ${USER_STRING} ${PYINST_ADDITIONAL_PIP_PARAMS} ${WHEEL_ARG} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
   endif()
 
-  # iterate over the given interpreters
-  foreach(version ${PYINST_MAJOR_VERSION})
-    # install the package into the virtual env
-    execute_process(COMMAND ${CMAKE_BINARY_DIR}/dune-env-${version} ${VENV_INSTALL_COMMAND}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
+  #
+  # Now define rules for `make pyinstall`.
+  #
 
-    # define a rule on how to install the package during make install
-    if(PIP${version}_FOUND)
-      install(CODE "execute_process(COMMAND ${PYTHON${version}_EXECUTABLE} ${SYSTEM_INSTALL_OPTIONS}
-                                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
-                   ")
-    else()
-      install(CODE "message(FATAL_ERROR \"You need the python${version} package pip installed on the host system to install a module that contains python code\")")
-    endif()
-  endforeach()
+  dune_module_path(MODULE dune-python
+                   RESULT DUNE_PYTHON_MODULE_DIR
+                   CMAKE_MODULES)
+
+  # Determine a target name for installing this package
+  string(REPLACE "/" "_" name_suffix ${PYINST_PATH})
+  set(targetname "pyinstall_${name_suffix}")
+
+  # Add a custom target that globally installs this package if requested
+  add_custom_target(${targetname}
+                    COMMAND ${CMAKE_COMMAND}
+                            -DCMAKE_MODULE_PATH=${DUNE_PYTHON_MODULE_DIR}
+                            -DCMDLINE="${SYSTEM_INSTALL_CMDLINE}"
+                            -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+                             -P ${DUNE_PYTHON_MODULE_DIR}/install_python_package.cmake
+                    COMMENT "Installing the python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}"
+                    )
+
+  add_dependencies(pyinstall ${targetname})
+
+  #
+  # Define rules for `make install` that install a wheel into a central wheelhouse
+  #
+  # NB: This is necessary, to allow mixing installed and non-installed modules
+  #     with python packages. The wheelhouse will allow to install any missing
+  #     python packages into the virtualenv.
+  #
+
+  # Construct the wheel installation commandline
+  if(PYINST_NO_PIP)
+    set(WHEEL_COMMAND setup.py bdist_wheel)
+  else()
+    set(WHEEL_COMMAND -m pip wheel)
+  endif()
+
+  set(WHEEL_COMMAND ${PYTHON_EXECUTABLE} ${WHEEL_COMMAND} -w ${DUNE_PYTHON_WHEELHOUSE} ${WHEEL_ARG} ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH})
+
+  install(CODE "message(\"Installing wheel for python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}...\")
+                dune_execute_process(COMMAND ${WHEEL_COMMAND}
+                                     ERROR_MESSAGE \"Error installing wheel for python package at ${CMAKE_CURRENT_SOURCE_DIR}/${PYINST_PATH}\"
+                                     )"
+          )
+
+  #
+  # Set some paths needed for Sphinx documentation.
+  #
 
   # Use a custom section to export python path to downstream modules
   set(DUNE_CUSTOM_PKG_CONFIG_SECTION "${DUNE_CUSTOM_PKG_CONFIG_SECTION}
