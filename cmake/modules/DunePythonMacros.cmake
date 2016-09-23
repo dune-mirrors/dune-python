@@ -64,12 +64,12 @@ if(DUNE_FORCE_PYTHON2 AND DUNE_FORCE_PYTHON3)
   message(FATAL_ERROR "Cannot enforce both python2 *and* python3")
 endif()
 if(DUNE_FORCE_PYTHON2)
-  set(_VERSION_STRING "2")
+  set(Python_ADDITIONAL_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
 endif()
 if(DUNE_FORCE_PYTHON3)
-  set(_VERSION_STRING "3")
+  set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
 endif()
-find_package(PythonInterp ${_VERSION_STRING} REQUIRED)
+find_package(PythonInterp REQUIRED)
 
 # Create a virtualenv to install all python packages from all dune
 # modules that provide packages in. We only ever want to create one
