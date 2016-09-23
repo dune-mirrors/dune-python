@@ -59,6 +59,11 @@ install(CODE "set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
               include(DuneExecuteProcess)
              ")
 
+# Nuke any python interpreter found by dune-common from the cache.
+# It did not use our constraints!
+unset(PYTHON_EXECUTABLE CACHE)
+set(PYTHONINTERP_FOUND FALSE)
+
 # Look for the python interpreter. Note that this interpreter might also be
 # originating from a virtual environment.
 set(_VERSION_STRING "")
