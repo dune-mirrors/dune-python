@@ -93,8 +93,7 @@ create_virtualenv(NAME python-env
 # We also create a wrapper around this virtual env, which is placed
 # in every build directory for easy access without knowledge of the
 # actual location of the env.
-create_virtualenv_wrapper(ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH}
-                          NAME dune-env)
+create_virtualenv_wrapper(NAME dune-env)
 
 # During `make install`, also install all python stuff
 install(CODE "message(\"Installing python packages defined in ${CMAKE_PROJECT_NAME}...\")

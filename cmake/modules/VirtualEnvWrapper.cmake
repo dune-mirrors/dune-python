@@ -9,7 +9,8 @@
 #       :required:
 #       :argname: path
 #
-#       Directory that the virtualenv to wrap is located
+#       Directory that the virtualenv to wrap is located,
+#       defaults to the standard dune-python virtualenv.
 #
 #    .. cmake_param:: COMMANDS
 #       :multi:
@@ -49,6 +50,9 @@ function(create_virtualenv_wrapper)
   endif()
 
   # apply defaults
+  if(NOT ENV_WRAPPER_ENVPATH)
+    set(ENV_WRAPPER_ENVPATH ${DUNE_PYTHON_VIRTUALENV_PATH})
+  endif()
   if(NOT ENV_WRAPPER_NAME)
     # Use get_filename_component to extract the last directory in the path.
     # First step is necessary to be robust towards a / being at the end of the input.
