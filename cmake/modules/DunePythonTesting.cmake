@@ -59,8 +59,9 @@ function(add_python_test_command)
   set(commandstr "")
   foreach(comm ${PYTEST_COMMAND})
     set(commandstr "${commandstr}_${comm}")
-    string(REPLACE "/" "_" commandstr ${commandstr})
   endforeach()
+  set(commandstr "${commandstr}_${PYTEST_WORKING_DIRECTORY}")
+  string(REPLACE "/" "_" commandstr ${commandstr})
 
   # extract the raw envwrapper name for the naming scheme of the test target
   get_filename_component(envname ${PYTEST_VIRTUALENV} NAME)
