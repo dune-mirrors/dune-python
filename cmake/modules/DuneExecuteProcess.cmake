@@ -14,7 +14,7 @@
 
 function(dune_execute_process)
   include(CMakeParseArguments)
-  cmake_parse_arguments(EXECUTE "" "ERROR_MESSAGE" "" ${ARGN})
+  cmake_parse_arguments(EXECUTE "" "ERROR_MESSAGE;RESULT_VARIABLE;OUTPUT_VARIABLE" "" ${ARGN})
 
   execute_process(${EXECUTE_UNPARSED_ARGUMENTS}
                   RESULT_VARIABLE retcode
@@ -24,5 +24,12 @@ function(dune_execute_process)
   if(NOT "${retcode}" STREQUAL "0")
     cmake_parse_arguments(ERR "" "" "COMMAND" ${EXECUTE_UNPARSED_ARGUMENTS})
     message(FATAL_ERROR "${EXECUTE_ERROR_MESSAGE}\nRun command:${ERR_COMMAND}\nReturn code: ${retcode}\nDetailed log:\n${log}")
+  endif()
+
+  if(EXECUTE_RESULT_VARIABLE)
+    set(${EXECUTE_RESULT_VARIABLE} 0 PARENT_SCOPE)
+  endif()
+  if(EXECUTE_OUTPUT_VARIABLE)
+    set(${EXECUTE_OUTPUT_VARIABLE} ${log} PARENT_SCOPE)
   endif()
 endfunction()
