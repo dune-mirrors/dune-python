@@ -4,8 +4,8 @@
 # It is used for all unix-like systems.
 #
 
+# Exit on the first error!
+set -e
+
 source @DUNE_VIRTUALENV_PATH@/bin/activate
-@DUNE_VIRTUALENV_COMMANDS@ $@
-ret=$?
-deactivate
-exit $ret
+@DUNE_VIRTUALENV_COMMANDS@ "$@"
