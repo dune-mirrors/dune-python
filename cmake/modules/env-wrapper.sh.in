@@ -8,4 +8,4 @@
 set -e
 
 source @DUNE_VIRTUALENV_PATH@/bin/activate
-@DUNE_VIRTUALENV_COMMANDS@ $@
+@DUNE_VIRTUALENV_COMMANDS@ "$@"
