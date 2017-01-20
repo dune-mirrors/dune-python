@@ -48,7 +48,7 @@ class DotDict(dict):
             dict.__delitem__(self, key)
 
     def __len__(self):
-        return sum([1 for i in self])
+        return sum([1 for i in self.__iter__()])
 
     def __iter__(self, prefix=[]):
         for i in dict.__iter__(self):
@@ -103,10 +103,10 @@ class DotDict(dict):
             return default
 
     def items(self):
-        return [(k, self[k]) for k in self]
+        return [(k, self[k]) for k in self.__iter__()]
 
     def keys(self):
-        return [k for k in self]
+        return [k for k in self.__iter__()]
 
     def values(self):
-        return [self[k] for k in self]
+        return [self[k] for k in self.__iter__()]
