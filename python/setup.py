@@ -12,6 +12,6 @@ setup(name='dune.common',
                 'dune.common.parametertree',
                 'dune.common.modules',
                 ],
-      install_requires=['pyparsing==2.0.6',
+      install_requires=['pyparsing>=2.1.10',
                         ],
       )
